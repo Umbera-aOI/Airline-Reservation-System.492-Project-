@@ -6,8 +6,6 @@ import Header from '../components/Header'
 
 import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
 
-import ClerkProvider from '../integrations/clerk/provider'
-
 import type { QueryClient } from '@tanstack/react-query'
 
 interface MyRouterContext {
@@ -17,7 +15,6 @@ interface MyRouterContext {
 export const Route = createRootRouteWithContext<MyRouterContext>()({
   component: () => (
     <>
-      <ClerkProvider>
         <Header />
         <Outlet />
         <TanStackDevtools
@@ -32,7 +29,6 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
             TanStackQueryDevtools,
           ]}
         />
-      </ClerkProvider>
     </>
   ),
 })

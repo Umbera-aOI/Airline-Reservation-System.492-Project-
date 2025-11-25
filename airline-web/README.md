@@ -30,13 +30,6 @@ npm run test
 This project uses [Tailwind CSS](https://tailwindcss.com/) for styling.
 
 
-
-## Setting up Clerk
-
-- Set the `VITE_CLERK_PUBLISHABLE_KEY` in your `.env.local`.
-
-
-
 ## Routing
 This project uses [TanStack Router](https://tanstack.com/router). The initial setup is a file based router. Which means that the routes are managed as files in `src/routes`.
 
