@@ -10,53 +10,61 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as DemoTanstackQueryRouteImport } from './routes/demo/tanstack-query'
-import { Route as DemoClerkRouteImport } from './routes/demo/clerk'
+import { Route as FlightsFlightIdPaymentRouteImport } from './routes/flights/$flightId/payment'
+import { Route as FlightsFlightIdConfirmationRouteImport } from './routes/flights/$flightId/confirmation'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DemoTanstackQueryRoute = DemoTanstackQueryRouteImport.update({
-  id: '/demo/tanstack-query',
-  path: '/demo/tanstack-query',
+const FlightsFlightIdPaymentRoute = FlightsFlightIdPaymentRouteImport.update({
+  id: '/flights/$flightId/payment',
+  path: '/flights/$flightId/payment',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DemoClerkRoute = DemoClerkRouteImport.update({
-  id: '/demo/clerk',
-  path: '/demo/clerk',
-  getParentRoute: () => rootRouteImport,
-} as any)
+const FlightsFlightIdConfirmationRoute =
+  FlightsFlightIdConfirmationRouteImport.update({
+    id: '/flights/$flightId/confirmation',
+    path: '/flights/$flightId/confirmation',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/demo/clerk': typeof DemoClerkRoute
-  '/demo/tanstack-query': typeof DemoTanstackQueryRoute
+  '/flights/$flightId/confirmation': typeof FlightsFlightIdConfirmationRoute
+  '/flights/$flightId/payment': typeof FlightsFlightIdPaymentRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/demo/clerk': typeof DemoClerkRoute
-  '/demo/tanstack-query': typeof DemoTanstackQueryRoute
+  '/flights/$flightId/confirmation': typeof FlightsFlightIdConfirmationRoute
+  '/flights/$flightId/payment': typeof FlightsFlightIdPaymentRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/demo/clerk': typeof DemoClerkRoute
-  '/demo/tanstack-query': typeof DemoTanstackQueryRoute
+  '/flights/$flightId/confirmation': typeof FlightsFlightIdConfirmationRoute
+  '/flights/$flightId/payment': typeof FlightsFlightIdPaymentRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/demo/clerk' | '/demo/tanstack-query'
+  fullPaths:
+    | '/'
+    | '/flights/$flightId/confirmation'
+    | '/flights/$flightId/payment'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/demo/clerk' | '/demo/tanstack-query'
-  id: '__root__' | '/' | '/demo/clerk' | '/demo/tanstack-query'
+  to: '/' | '/flights/$flightId/confirmation' | '/flights/$flightId/payment'
+  id:
+    | '__root__'
+    | '/'
+    | '/flights/$flightId/confirmation'
+    | '/flights/$flightId/payment'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  DemoClerkRoute: typeof DemoClerkRoute
-  DemoTanstackQueryRoute: typeof DemoTanstackQueryRoute
+  FlightsFlightIdConfirmationRoute: typeof FlightsFlightIdConfirmationRoute
+  FlightsFlightIdPaymentRoute: typeof FlightsFlightIdPaymentRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -68,18 +76,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/demo/tanstack-query': {
-      id: '/demo/tanstack-query'
-      path: '/demo/tanstack-query'
-      fullPath: '/demo/tanstack-query'
-      preLoaderRoute: typeof DemoTanstackQueryRouteImport
+    '/flights/$flightId/payment': {
+      id: '/flights/$flightId/payment'
+      path: '/flights/$flightId/payment'
+      fullPath: '/flights/$flightId/payment'
+      preLoaderRoute: typeof FlightsFlightIdPaymentRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/demo/clerk': {
-      id: '/demo/clerk'
-      path: '/demo/clerk'
-      fullPath: '/demo/clerk'
-      preLoaderRoute: typeof DemoClerkRouteImport
+    '/flights/$flightId/confirmation': {
+      id: '/flights/$flightId/confirmation'
+      path: '/flights/$flightId/confirmation'
+      fullPath: '/flights/$flightId/confirmation'
+      preLoaderRoute: typeof FlightsFlightIdConfirmationRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -87,8 +95,8 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  DemoClerkRoute: DemoClerkRoute,
-  DemoTanstackQueryRoute: DemoTanstackQueryRoute,
+  FlightsFlightIdConfirmationRoute: FlightsFlightIdConfirmationRoute,
+  FlightsFlightIdPaymentRoute: FlightsFlightIdPaymentRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
