@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, type ChangeEvent, type FormEvent } from 'react'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
@@ -58,13 +58,13 @@ function FlightPaymentPage() {
     })
 
     const handleChange = (
-        e: React.ChangeEvent<HTMLInputElement>,
+        e: ChangeEvent<HTMLInputElement>,
     ) => {
         const { name, value } = e.target
         setFormValues((prev: any) => ({ ...prev, [name]: value }))
     }
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = (e: FormEvent) => {
         e.preventDefault()
         mutate(formValues)
     }
