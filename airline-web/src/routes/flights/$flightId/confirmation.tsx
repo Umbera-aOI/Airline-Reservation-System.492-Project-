@@ -17,7 +17,7 @@ export const Route = createFileRoute(
 
 function FlightConfirmationPage() {
     const { flightId } = Route.useParams()
-    const search = Route.useSearch() as { confirmationId?: string }
+    const search = Route.useSearch() as { confirmationCode?: string }
     const navigate = useNavigate({ from: Route.fullPath })
 
     const { data: flight } = useQuery({
@@ -41,10 +41,10 @@ function FlightConfirmationPage() {
                         Thank you for your purchase!
                     </Typography>
 
-                    {search.confirmationId && (
+                    {search.confirmationCode && (
                         <Typography sx={{ mb: 2 }}>
                             Confirmation ID:{' '}
-                            <strong>{search.confirmationId}</strong>
+                            <strong>{search.confirmationCode}</strong>
                         </Typography>
                     )}
 

@@ -29,7 +29,8 @@ import {
     type Flight,
     type FlightSearchParams,
     searchFlights,
-    getCities
+    getOrigins,
+    getDestinations,
 } from '@/api/flights'
 
 export const Route = createFileRoute('/')({
@@ -62,10 +63,17 @@ function FlightsSearchPage() {
         enabled: !!searchParams,
     })
 
-    const citiesQuery = useQuery({
-        queryKey: ['cities'],
+    const originsQuery = useQuery({
+        queryKey: ['origins'],
         queryFn: () => {
-            return getCities()
+            return getOrigins()
+        },
+    })
+
+    const destinationsQuery = useQuery({
+        queryKey: ['destinations', formValues.origin],
+        queryFn: () => {
+            return getDestinations(formValues.origin)
         },
     })
     const handleSubmit = (e: FormEvent) => {
@@ -164,8 +172,8 @@ function FlightsSearchPage() {
                     >
                         <Autocomplete
                             value={formValues.origin}
-                            loading={citiesQuery.isLoading}
-                            options={citiesQuery.data ?? []}
+                            loading={originsQuery.isLoading}
+                            options={originsQuery.data ?? []}
                             onChange={(_e, value) =>
                                     setFormValues((prev) => ({ ...prev, origin: `${value}` }))
                             }
@@ -173,8 +181,8 @@ function FlightsSearchPage() {
                         />
                         <Autocomplete
                             value={formValues.destination}
-                            loading={citiesQuery.isLoading}
-                            options={citiesQuery.data ?? []}
+                            loading={destinationsQuery.isLoading}
+                            options={destinationsQuery.data ?? []}
                             onChange={(_e, value) =>
                                 setFormValues((prev) => ({ ...prev, destination: `${value}` }))
                             }

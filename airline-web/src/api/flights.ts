@@ -1,4 +1,4 @@
-import * as dayjs from 'dayjs'
+import dayjs from 'dayjs'
 
 // src/api/flights.ts
 export type FlightSearchParams = {
@@ -8,10 +8,10 @@ export type FlightSearchParams = {
 }
 
 export type Flight = {
-    id: string
+    id: number
     airline: string
-    departureTime: string // "HH:mm"
-    arrivalTime: string // "HH:mm"
+    departureTime: string
+    arrivalTime: string
     price: number
     origin: string
     destination: string
@@ -25,85 +25,81 @@ export type PaymentPayload = {
 }
 
 export type PaymentResult = {
-    confirmationId: string
+    confirmationCode: string
 }
+
+const API_BASE_URL = 'http://localhost:3001';
 
 export async function searchFlights(
     params: FlightSearchParams,
 ): Promise<Flight[]> {
-    // TODO: replace with real API call
-    await new Promise((r) => setTimeout(r, 400))
-
-    // Mock data using the search params
-    return [
-        {
-            id: 'F001',
-            airline: 'SkyJet',
-            departureTime: '08:15',
-            arrivalTime: '10:05',
-            price: 149,
-            origin: params.origin,
-            destination: params.destination,
-        },
-        {
-            id: 'F002',
-            airline: 'Aurora Air',
-            departureTime: '13:40',
-            arrivalTime: '15:30',
-            price: 189,
-            origin: params.origin,
-            destination: params.destination,
-        },
-        {
-            id: 'F003',
-            airline: 'SkyJet',
-            departureTime: '18:10',
-            arrivalTime: '20:00',
-            price: 220,
-            origin: params.origin,
-            destination: params.destination,
-        },
-        {
-            id: 'F004',
-            airline: 'CloudNine',
-            departureTime: '21:10',
-            arrivalTime: '23:00',
-            price: 120,
-            origin: params.origin,
-            destination: params.destination,
-        },
-    ]
+    const urlParams = new URLSearchParams();
+    urlParams.append('origin', params.origin);
+    urlParams.append('destination', params.destination);
+    urlParams.append('date', params.date!.toISOString());
+    const request = new Request(`${API_BASE_URL}/flights?${urlParams}`, {
+        method: "GET"
+    });
+    const response = await fetch(request);
+    return response.json().then((flights) => flights.map((flight: any) =>
+        ({
+            id: flight.id,
+            origin: flight.origin,
+            destination: flight.destination,
+            airline: 'ABC',
+            price: Math.floor(Math.random() * 400) + 200,
+            departureTime: dayjs(flight.date).format('HH:mm'),
+            arrivalTime: dayjs(flight.date).add(4, 'hours').format('HH:mm'),
+        }
+    )));
 }
 
 export async function getFlightById(id: string): Promise<Flight> {
-    // TODO: replace with real API call
-    await new Promise((r) => setTimeout(r, 200))
-    return {
-        id,
-        airline: 'SkyJet',
-        departureTime: '08:15',
-        arrivalTime: '10:05',
-        price: 149,
-        origin: 'DEN',
-        destination: 'LAX',
-    }
+    const request = new Request(`${API_BASE_URL}/flights/${id}`, {
+        method: "GET"
+    });
+    const response = await fetch(request);
+    return response.json().then((flight) =>
+        ({
+                id: flight.id,
+                origin: flight.origin,
+                destination: flight.destination,
+                airline: 'ABC',
+                price: Math.floor(Math.random() * 400) + 200,
+                departureTime: dayjs(flight.date).format('HH:mm'),
+                arrivalTime: dayjs(flight.date).add(4, 'hours').format('HH:mm'),
+            }
+        ));
 }
 
+export async function getOrigins(): Promise<String[]> {
+    const request = new Request(`${API_BASE_URL}/flights/origins`, {
+        method: "GET"
+    });
+    const response = await fetch(request);
+    return response.json();
+}
 
-export async function getCities(): Promise<String[]> {
-    // TODO: replace with real API call
-    await new Promise((r) => setTimeout(r, 400))
-
-    return ['Denver', 'Los Angeles', 'Chicago', 'New York', 'Seattle', 'Atlanta', 'Miami']
+export async function getDestinations(origin: string): Promise<String[]> {
+    const request = new Request(`${API_BASE_URL}/flights/destinations?origin=${origin}`, {
+        method: "GET"
+    });
+    const response = await fetch(request);
+    return response.json();
 }
 
 export async function payForFlight(input: {
-    flightId: string
-    payload: PaymentPayload
+    flightId: string,
+    firstName: string,
+    lastName: string,
 }): Promise<PaymentResult> {
-    // TODO: replace with real API call
-    await new Promise((r) => setTimeout(r, 600))
-    return {
-        confirmationId: 'CNF-' + input.flightId + '-12345',
-    }
+    const request = new Request(`${API_BASE_URL}/reservations`, {
+        method: "POST",
+        body: JSON.stringify(input),
+        headers: { 'Content-Type': 'application/json' }
+    });
+    const response = await fetch(request);
+    return response.json().then((result) => ({
+        confirmationCode: result.confirmationCode
+    }));
 }

@@ -1,5 +1,5 @@
 
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import {Body, Controller, Get, Param, Post, Query} from '@nestjs/common';
 import { FlightsService } from './flights.service';
 
 @Controller('flights')
@@ -16,6 +16,21 @@ export class FlightsController {
         @Query('date') date: string,
     ): Promise<string> {
         return JSON.stringify(await this.flightsService.search(origin, destination, date));
+    }
+
+    @Get(':id')
+    findOne(@Param('id') id: string) {
+        return this.flightsService.findOne(+id);
+    }
+
+    @Get('origins')
+    async getOrigins(): Promise<string> {
+        return JSON.stringify(await this.flightsService.getOrigins());
+    }
+
+    @Get('destinations')
+    async getDestinations(): Promise<string> {
+        return JSON.stringify(await this.flightsService.getDestinations());
     }
     @Post()
     async create(@Body() data: object): Promise<string> {

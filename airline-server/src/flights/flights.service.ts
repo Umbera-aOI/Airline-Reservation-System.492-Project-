@@ -32,6 +32,16 @@ export class FlightsService {
         return this.flightsRepository.findOneBy({ id });
     }
 
+    getOrigins() : Promise<string[]> {
+        return this.flightsRepository.query("SELECT DISTINCT origin FROM flight")
+            .then(res => res.map(f => f.origin));
+    }
+
+    getDestinations() : Promise<string[]> {
+        return this.flightsRepository.query("SELECT DISTINCT destination FROM flight")
+            .then(res => res.map(f => f.destination));
+    }
+
     async remove(id: number): Promise<void> {
         await this.flightsRepository.delete(id);
     }

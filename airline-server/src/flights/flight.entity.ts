@@ -1,5 +1,6 @@
 
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Reservation } from "../reservations/reservation.entity";
 
 @Entity()
 export class Flight {
@@ -14,4 +15,7 @@ export class Flight {
 
     @Column()
     date: Date;
+
+    @OneToMany(type => Reservation, reservation => reservation.flight)
+    reservations: Reservation[];
 }

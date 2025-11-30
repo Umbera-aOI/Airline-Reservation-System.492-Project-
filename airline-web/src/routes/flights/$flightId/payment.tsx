@@ -43,8 +43,10 @@ function FlightPaymentPage() {
         isError,
         error,
     } = useMutation({
-        mutationFn: (payload: PaymentPayload) =>
-            payForFlight({ flightId, payload }),
+        mutationFn: (payload: PaymentPayload) => {
+            const [firstName, lastName] = payload.nameOnCard.split(' ');
+            return payForFlight({ flightId, firstName, lastName });
+        },
         onSuccess: (result) => {
             // Optionally refresh any related queries
             queryClient.invalidateQueries({ queryKey: ['flight', flightId] })
@@ -52,7 +54,7 @@ function FlightPaymentPage() {
             navigate({
                 to: '/flights/$flightId/confirmation',
                 params: { flightId },
-                search: { confirmationId: result.confirmationId },
+                search: { confirmationCode: result.confirmationCode },
             })
         },
     })
