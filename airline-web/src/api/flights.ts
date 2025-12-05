@@ -9,7 +9,7 @@ export type FlightSearchParams = {
 
 export type Flight = {
     id: number
-    airline: string
+    flightCode: string
     departureTime: string
     arrivalTime: string
     price: number
@@ -37,25 +37,25 @@ export async function searchFlights(
     urlParams.append('origin', params.origin);
     urlParams.append('destination', params.destination);
     urlParams.append('date', params.date!.toISOString());
-    const request = new Request(`${API_BASE_URL}/flights?${urlParams}`, {
+    const request = new Request(`${API_BASE_URL}/flights/search?${urlParams}`, {
         method: "GET"
     });
     const response = await fetch(request);
     return response.json().then((flights) => flights.map((flight: any) =>
         ({
-            id: flight.id,
-            origin: flight.origin,
-            destination: flight.destination,
-            airline: 'ABC',
-            price: Math.floor(Math.random() * 400) + 200,
-            departureTime: dayjs(flight.date).format('HH:mm'),
-            arrivalTime: dayjs(flight.date).add(4, 'hours').format('HH:mm'),
-        }
-    )));
+                id: flight.id,
+                origin: flight.origin,
+                destination: flight.destination,
+                flightCode: flight.flightCode,
+                price: flight.price / 100.0,
+                departureTime: dayjs(flight.date).format('HH:mm'),
+                arrivalTime: dayjs(flight.date).add(4, 'hours').format('HH:mm'),
+            }
+        )));
 }
 
 export async function getFlightById(id: string): Promise<Flight> {
-    const request = new Request(`${API_BASE_URL}/flights/${id}`, {
+    const request = new Request(`${API_BASE_URL}/flights/by-id/${id}`, {
         method: "GET"
     });
     const response = await fetch(request);
@@ -64,8 +64,8 @@ export async function getFlightById(id: string): Promise<Flight> {
                 id: flight.id,
                 origin: flight.origin,
                 destination: flight.destination,
-                airline: 'ABC',
-                price: Math.floor(Math.random() * 400) + 200,
+                flightCode: flight.flightCode,
+                price: flight.price / 100.0,
                 departureTime: dayjs(flight.date).format('HH:mm'),
                 arrivalTime: dayjs(flight.date).add(4, 'hours').format('HH:mm'),
             }
@@ -96,7 +96,7 @@ export async function payForFlight(input: {
     const request = new Request(`${API_BASE_URL}/reservations`, {
         method: "POST",
         body: JSON.stringify(input),
-        headers: { 'Content-Type': 'application/json' }
+        headers: {'Content-Type': 'application/json'}
     });
     const response = await fetch(request);
     return response.json().then((result) => ({

@@ -1,6 +1,6 @@
-import { useState, type ChangeEvent, type FormEvent } from 'react'
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import {useState, type ChangeEvent, type FormEvent} from 'react'
+import {createFileRoute, useNavigate} from '@tanstack/react-router'
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query'
 import {
     Box,
     Button,
@@ -21,11 +21,11 @@ export const Route = createFileRoute('/flights/$flightId/payment')({
 })
 
 function FlightPaymentPage() {
-    const { flightId } = Route.useParams()
-    const navigate = useNavigate({ from: Route.fullPath })
+    const {flightId} = Route.useParams()
+    const navigate = useNavigate({from: Route.fullPath})
     const queryClient = useQueryClient()
 
-    const { data: flight, isLoading: isFlightLoading } = useQuery({
+    const {data: flight, isLoading: isFlightLoading} = useQuery({
         queryKey: ['flight', flightId],
         queryFn: () => getFlightById(flightId),
     })
@@ -45,16 +45,16 @@ function FlightPaymentPage() {
     } = useMutation({
         mutationFn: (payload: PaymentPayload) => {
             const [firstName, lastName] = payload.nameOnCard.split(' ');
-            return payForFlight({ flightId, firstName, lastName });
+            return payForFlight({flightId, firstName, lastName});
         },
         onSuccess: (result) => {
             // Optionally refresh any related queries
-            queryClient.invalidateQueries({ queryKey: ['flight', flightId] })
+            queryClient.invalidateQueries({queryKey: ['flight', flightId]})
 
             navigate({
                 to: '/flights/$flightId/confirmation',
-                params: { flightId },
-                search: { confirmationCode: result.confirmationCode },
+                params: {flightId},
+                search: {confirmationCode: result.confirmationCode},
             })
         },
     })
@@ -62,8 +62,8 @@ function FlightPaymentPage() {
     const handleChange = (
         e: ChangeEvent<HTMLInputElement>,
     ) => {
-        const { name, value } = e.target
-        setFormValues((prev: any) => ({ ...prev, [name]: value }))
+        const {name, value} = e.target
+        setFormValues((prev: any) => ({...prev, [name]: value}))
     }
 
     const handleSubmit = (e: FormEvent) => {
@@ -72,12 +72,12 @@ function FlightPaymentPage() {
     }
 
     return (
-        <Box sx={{ maxWidth: 600, mx: 'auto', mt: 4 }}>
+        <Box sx={{maxWidth: 600, mx: 'auto', mt: 4}}>
             <Typography variant="h4" gutterBottom>
                 Payment
             </Typography>
 
-            <Card sx={{ mb: 3 }}>
+            <Card sx={{mb: 3}}>
                 <CardContent>
                     {isFlightLoading && <Typography>Loading flight…</Typography>}
                     {flight && (
@@ -85,13 +85,16 @@ function FlightPaymentPage() {
                             <Typography variant="subtitle1">
                                 Flight ID: {flight.id}
                             </Typography>
+                            <Typography variant="subtitle1">
+                                Flight Code: {flight.flightCode}
+                            </Typography>
                             <Typography variant="body2">
                                 {flight.origin} → {flight.destination}
                             </Typography>
                             <Typography variant="body2">
                                 Airline: {flight.airline}
                             </Typography>
-                            <Typography variant="body2" sx={{ mb: 1 }}>
+                            <Typography variant="body2" sx={{mb: 1}}>
                                 Departure: {flight.departureTime}, Arrival:{' '}
                                 {flight.arrivalTime}
                             </Typography>
@@ -108,7 +111,7 @@ function FlightPaymentPage() {
                     <Box
                         component="form"
                         onSubmit={handleSubmit}
-                        sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
+                        sx={{display: 'flex', flexDirection: 'column', gap: 2}}
                     >
                         <TextField
                             label="Card Number"
@@ -116,7 +119,7 @@ function FlightPaymentPage() {
                             value={formValues.cardNumber}
                             onChange={handleChange}
                             required
-                            inputProps={{ maxLength: 19 }}
+                            inputProps={{maxLength: 19}}
                             placeholder="**** **** **** ****"
                         />
                         <TextField
@@ -126,12 +129,12 @@ function FlightPaymentPage() {
                             onChange={handleChange}
                             required
                         />
-                        <Box sx={{ display: 'flex', gap: 2 }}>
+                        <Box sx={{display: 'flex', gap: 2}}>
                             <TextField
                                 label="Expiry (MM/YY)"
                                 name="expiry"
                                 value={formValues.expiry}
-                                inputProps={{ maxLength: 4 }}
+                                inputProps={{maxLength: 4}}
                                 onChange={handleChange}
                                 required
                             />
@@ -142,7 +145,7 @@ function FlightPaymentPage() {
                                 onChange={handleChange}
                                 required
                                 type="password"
-                                inputProps={{ maxLength: 4 }}
+                                inputProps={{maxLength: 4}}
                             />
                         </Box>
 
@@ -152,12 +155,12 @@ function FlightPaymentPage() {
                             </Typography>
                         )}
 
-                        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+                        <Box sx={{display: 'flex', justifyContent: 'flex-end', mt: 2}}>
                             <Button
                                 type="submit"
                                 variant="contained"
                                 disabled={isPending}
-                                startIcon={isPending ? <CircularProgress size={16} /> : undefined}
+                                startIcon={isPending ? <CircularProgress size={16}/> : undefined}
                             >
                                 {isPending ? 'Processing…' : 'Pay Now'}
                             </Button>

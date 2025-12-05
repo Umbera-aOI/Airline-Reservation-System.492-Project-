@@ -1,6 +1,5 @@
-
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
-import { Reservation } from "../reservations/reservation.entity";
+import {Entity, Column, PrimaryGeneratedColumn, OneToMany} from 'typeorm';
+import {Reservation} from "../reservations/reservation.entity";
 
 @Entity()
 export class Flight {
@@ -15,6 +14,12 @@ export class Flight {
 
     @Column()
     date: Date;
+
+    @Column()
+    price: number;
+
+    @Column({default: 'FL123'})
+    flightCode: string;
 
     @OneToMany(type => Reservation, reservation => reservation.flight)
     reservations: Reservation[];

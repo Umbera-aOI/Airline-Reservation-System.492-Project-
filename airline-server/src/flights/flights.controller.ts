@@ -1,14 +1,17 @@
-
 import {Body, Controller, Get, Param, Post, Query} from '@nestjs/common';
-import { FlightsService } from './flights.service';
+import {FlightsService} from './flights.service';
+import {CreateFlightDto} from "./dto/create-flight.dto";
 
 @Controller('flights')
 export class FlightsController {
-    constructor(private flightsService: FlightsService) {}
+    constructor(private flightsService: FlightsService) {
+    }
+
     @Get()
     async findAll(): Promise<string> {
         return JSON.stringify(await this.flightsService.findAll());
     }
+
     @Get('search')
     async search(
         @Query('origin') origin: string,
@@ -18,7 +21,7 @@ export class FlightsController {
         return JSON.stringify(await this.flightsService.search(origin, destination, date));
     }
 
-    @Get(':id')
+    @Get('/by-id/:id')
     findOne(@Param('id') id: string) {
         return this.flightsService.findOne(+id);
     }
@@ -29,11 +32,12 @@ export class FlightsController {
     }
 
     @Get('destinations')
-    async getDestinations(): Promise<string> {
-        return JSON.stringify(await this.flightsService.getDestinations());
+    async getDestinations(@Query('origin') origin: string): Promise<string> {
+        return JSON.stringify(await this.flightsService.getDestinations(origin));
     }
+
     @Post()
-    async create(@Body() data: object): Promise<string> {
+    async create(@Body() data: CreateFlightDto): Promise<string> {
         const flight = await this.flightsService.create(data);
         return JSON.stringify(flight);
     }
