@@ -7,6 +7,7 @@ import {
     Box,
     Button,
     Card,
+    CardActions,
     CardContent,
     TextField,
     Typography,
@@ -85,8 +86,6 @@ function FlightsSearchPage() {
             <Card sx={{mb: 3}}>
                 <CardContent>
                     <Box
-                        component="form"
-                        onSubmit={handleSubmit}
                         sx={{
                             display: 'grid',
                             gridTemplateColumns: {xs: '1fr', sm: '1fr 1fr', md: 'repeat(3, 1fr)'},
@@ -121,16 +120,18 @@ function FlightsSearchPage() {
                                         }
                             />
                         </LocalizationProvider>
-                        <Box sx={{gridColumn: {xs: '1 / -1', sm: 'span 2', md: 'span 3'}}}>
-                            <Typography variant="body2" sx={{mb: 1}}>
-                                Passenger count: 1
-                            </Typography>
-                            <Button type="submit" variant="contained">
-                                Search
-                            </Button>
-                        </Box>
                     </Box>
                 </CardContent>
+                <CardActions>
+                    <Box>
+                        <Typography variant="body2" sx={{mb: 1}}>
+                            Passenger count: 1
+                        </Typography>
+                        <Button onClick={handleSubmit} variant="contained">
+                            Search
+                        </Button>
+                    </Box>
+                </CardActions>
             </Card>
 
             {searchParams &&

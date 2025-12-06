@@ -1,4 +1,4 @@
-import { Flight } from "../flights/flight.entity";
+import {Flight} from "../flights/flight.entity";
 import {Column, Entity, ManyToOne, PrimaryGeneratedColumn} from "typeorm";
 
 @Entity()
@@ -14,6 +14,9 @@ export class Reservation {
 
     @Column()
     lastName: string;
+
+    @Column({nullable: false})
+    flightId: number;
 
     @ManyToOne(type => Flight, flight => flight.reservations)
     flight: Flight;

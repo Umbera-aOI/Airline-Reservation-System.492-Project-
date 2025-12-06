@@ -21,6 +21,9 @@ export class Flight {
     @Column({default: 'FL123'})
     flightCode: string;
 
+    @Column({default: 10})
+    seatsAvailable: number;
+
     @OneToMany(type => Reservation, reservation => reservation.flight)
     reservations: Reservation[];
 }

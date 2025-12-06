@@ -28,12 +28,12 @@ export class FlightsController {
 
     @Get('origins')
     async getOrigins(): Promise<string> {
-        return JSON.stringify(await this.flightsService.getOrigins());
+        return await this.flightsService.getOrigins();
     }
 
     @Get('destinations')
     async getDestinations(@Query('origin') origin: string): Promise<string> {
-        return JSON.stringify(await this.flightsService.getDestinations(origin));
+        return await this.flightsService.getDestinations(origin);
     }
 
     @Post()

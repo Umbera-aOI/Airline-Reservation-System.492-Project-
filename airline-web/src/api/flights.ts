@@ -1,6 +1,5 @@
 import dayjs from 'dayjs'
 
-// src/api/flights.ts
 export type FlightSearchParams = {
     origin: string
     destination: string
@@ -16,19 +15,7 @@ export type Flight = {
     origin: string
     destination: string
 }
-
-export type PaymentPayload = {
-    cardNumber: string
-    nameOnCard: string
-    expiry: string // "MM/YY"
-    cvv: string
-}
-
-export type PaymentResult = {
-    confirmationCode: string
-}
-
-const API_BASE_URL = 'http://localhost:3001';
+import {API_BASE_URL} from './common'
 
 export async function searchFlights(
     params: FlightSearchParams,
@@ -54,7 +41,7 @@ export async function searchFlights(
         )));
 }
 
-export async function getFlightById(id: string): Promise<Flight> {
+export async function getFlightById(id: number): Promise<Flight> {
     const request = new Request(`${API_BASE_URL}/flights/by-id/${id}`, {
         method: "GET"
     });
@@ -86,20 +73,4 @@ export async function getDestinations(origin: string): Promise<String[]> {
     });
     const response = await fetch(request);
     return response.json();
-}
-
-export async function payForFlight(input: {
-    flightId: string,
-    firstName: string,
-    lastName: string,
-}): Promise<PaymentResult> {
-    const request = new Request(`${API_BASE_URL}/reservations`, {
-        method: "POST",
-        body: JSON.stringify(input),
-        headers: {'Content-Type': 'application/json'}
-    });
-    const response = await fetch(request);
-    return response.json().then((result) => ({
-        confirmationCode: result.confirmationCode
-    }));
 }

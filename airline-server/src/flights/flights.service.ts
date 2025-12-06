@@ -18,34 +18,42 @@ export class FlightsService {
 
     search(origin: string, destination: string, date: string): Promise<Flight[]> {
         const asDayjs = dayjs(date).startOf('day')
-        return this.flightsRepository.find({
-            where: {
-                origin, destination,
-                date: And(
-                    LessThan(asDayjs.endOf('day').toDate()),
-                    MoreThanOrEqual(asDayjs.toDate())
-                )
-            }
-        });
+        return this.flightsRepository.createQueryBuilder('flight')
+            .leftJoin('flight.reservations', 'reservation')
+            .where('flight.origin = :origin', {origin})
+            .andWhere('flight.destination = :destination', {destination})
+            .andWhere('flight.date < :endOfDay', {endOfDay: asDayjs.endOf('day').toDate()})
+            .andWhere('flight.date >= :beginningOfDay', {beginningOfDay: asDayjs.toDate()})
+            .groupBy('flight.id')
+            .having('flight.seatsAvailable > COUNT(reservation.id)')
+            .getMany()
     }
 
     findOne(id: number): Promise<Flight | null> {
         return this.flightsRepository.findOneBy({id});
     }
 
-    getOrigins(): Promise<string[]> {
-        return this.flightsRepository.query("SELECT DISTINCT origin FROM flight")
-            .then(res => res.map(f => f.origin));
+    async getOrigins(): Promise<string> {
+        return JSON.stringify(
+            await this.flightsRepository.createQueryBuilder('flights')
+                .select('origin').distinct()
+                .execute()
+                .then(res => res.map(f => f.origin))
+        );
     }
 
-    getDestinations(origin: String | undefined): Promise<string[]> {
+    async getDestinations(origin: String | undefined): Promise<string> {
+        let query = this.flightsRepository.createQueryBuilder('flights')
+            .select('destination').distinct();
+
         if (origin) {
-            return this.flightsRepository.query("SELECT DISTINCT destination FROM flight WHERE origin = $1", [origin])
-                .then(res => res.map(f => f.destination));
-        } else {
-            return this.flightsRepository.query("SELECT DISTINCT destination FROM flight")
-                .then(res => res.map(f => f.destination));
+            query = query.where('origin = :origin', {origin});
         }
+        return JSON.stringify(
+            await query
+                .execute()
+                .then(res => res.map(f => f.destination))
+        );
     }
 
     async remove(id: number): Promise<void> {

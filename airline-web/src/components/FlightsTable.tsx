@@ -16,7 +16,7 @@ import {
     Typography,
 } from '@mui/material'
 import type {Flight} from "@/api/flights.ts";
-import {useMemo, useState} from "react";
+import {useState} from "react";
 
 export default ({
                     flightData,

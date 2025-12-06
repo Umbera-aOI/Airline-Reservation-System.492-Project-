@@ -10,60 +10,76 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ReservationsSearchRouteImport } from './routes/reservations/search'
+import { Route as ReservationsConfirmationCodeRouteImport } from './routes/reservations/$confirmationCode'
 import { Route as FlightsFlightIdPaymentRouteImport } from './routes/flights/$flightId/payment'
-import { Route as FlightsFlightIdConfirmationRouteImport } from './routes/flights/$flightId/confirmation'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ReservationsSearchRoute = ReservationsSearchRouteImport.update({
+  id: '/reservations/search',
+  path: '/reservations/search',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReservationsConfirmationCodeRoute =
+  ReservationsConfirmationCodeRouteImport.update({
+    id: '/reservations/$confirmationCode',
+    path: '/reservations/$confirmationCode',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const FlightsFlightIdPaymentRoute = FlightsFlightIdPaymentRouteImport.update({
   id: '/flights/$flightId/payment',
   path: '/flights/$flightId/payment',
   getParentRoute: () => rootRouteImport,
 } as any)
-const FlightsFlightIdConfirmationRoute =
-  FlightsFlightIdConfirmationRouteImport.update({
-    id: '/flights/$flightId/confirmation',
-    path: '/flights/$flightId/confirmation',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/flights/$flightId/confirmation': typeof FlightsFlightIdConfirmationRoute
+  '/reservations/$confirmationCode': typeof ReservationsConfirmationCodeRoute
+  '/reservations/search': typeof ReservationsSearchRoute
   '/flights/$flightId/payment': typeof FlightsFlightIdPaymentRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/flights/$flightId/confirmation': typeof FlightsFlightIdConfirmationRoute
+  '/reservations/$confirmationCode': typeof ReservationsConfirmationCodeRoute
+  '/reservations/search': typeof ReservationsSearchRoute
   '/flights/$flightId/payment': typeof FlightsFlightIdPaymentRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/flights/$flightId/confirmation': typeof FlightsFlightIdConfirmationRoute
+  '/reservations/$confirmationCode': typeof ReservationsConfirmationCodeRoute
+  '/reservations/search': typeof ReservationsSearchRoute
   '/flights/$flightId/payment': typeof FlightsFlightIdPaymentRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/flights/$flightId/confirmation'
+    | '/reservations/$confirmationCode'
+    | '/reservations/search'
     | '/flights/$flightId/payment'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/flights/$flightId/confirmation' | '/flights/$flightId/payment'
+  to:
+    | '/'
+    | '/reservations/$confirmationCode'
+    | '/reservations/search'
+    | '/flights/$flightId/payment'
   id:
     | '__root__'
     | '/'
-    | '/flights/$flightId/confirmation'
+    | '/reservations/$confirmationCode'
+    | '/reservations/search'
     | '/flights/$flightId/payment'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  FlightsFlightIdConfirmationRoute: typeof FlightsFlightIdConfirmationRoute
+  ReservationsConfirmationCodeRoute: typeof ReservationsConfirmationCodeRoute
+  ReservationsSearchRoute: typeof ReservationsSearchRoute
   FlightsFlightIdPaymentRoute: typeof FlightsFlightIdPaymentRoute
 }
 
@@ -76,6 +92,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/reservations/search': {
+      id: '/reservations/search'
+      path: '/reservations/search'
+      fullPath: '/reservations/search'
+      preLoaderRoute: typeof ReservationsSearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reservations/$confirmationCode': {
+      id: '/reservations/$confirmationCode'
+      path: '/reservations/$confirmationCode'
+      fullPath: '/reservations/$confirmationCode'
+      preLoaderRoute: typeof ReservationsConfirmationCodeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/flights/$flightId/payment': {
       id: '/flights/$flightId/payment'
       path: '/flights/$flightId/payment'
@@ -83,19 +113,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FlightsFlightIdPaymentRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/flights/$flightId/confirmation': {
-      id: '/flights/$flightId/confirmation'
-      path: '/flights/$flightId/confirmation'
-      fullPath: '/flights/$flightId/confirmation'
-      preLoaderRoute: typeof FlightsFlightIdConfirmationRouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  FlightsFlightIdConfirmationRoute: FlightsFlightIdConfirmationRoute,
+  ReservationsConfirmationCodeRoute: ReservationsConfirmationCodeRoute,
+  ReservationsSearchRoute: ReservationsSearchRoute,
   FlightsFlightIdPaymentRoute: FlightsFlightIdPaymentRoute,
 }
 export const routeTree = rootRouteImport

@@ -16,27 +16,18 @@ export class ReservationsService {
     }
 
     async create(createReservationDto: CreateReservationDto) {
-        console.log(createReservationDto);
         const reservation = {
             ...createReservationDto,
-            flight: await this.flightsRepository.findOneByOrFail({ id: createReservationDto.flightId }),
+            flight: await this.flightsRepository.findOneByOrFail({id: createReservationDto.flightId}),
             confirmationCode: Math.random().toString(36).substring(2, 7).toUpperCase()
         }
-        const saved =await this.reservationsRepository.save(
+        const saved = await this.reservationsRepository.save(
             this.reservationsRepository.create(reservation)
         );
-        return JSON.stringify({ ...saved, flight: saved.flight });
+        return JSON.stringify({...saved, flight: saved.flight});
     }
 
-    findAll() {
-        return `This action returns all reservations`;
-    }
-
-    findOne(id: number) {
-        return `This action returns a #${id} reservation`;
-    }
-
-    remove(id: number) {
-        return `This action removes a #${id} reservation`;
+    async findConfirmation(confirmationCode: string, lastName: string) {
+        return JSON.stringify(await this.reservationsRepository.findOneByOrFail({confirmationCode, lastName}));
     }
 }

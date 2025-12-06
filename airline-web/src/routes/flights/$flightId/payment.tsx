@@ -5,6 +5,7 @@ import {
     Box,
     Button,
     Card,
+    CardActions,
     CardContent,
     CircularProgress,
     TextField,
@@ -12,9 +13,12 @@ import {
 } from '@mui/material'
 import {
     getFlightById,
-    payForFlight,
-    type PaymentPayload,
 } from '@/api/flights.ts'
+import {
+    payForFlight,
+    type PaymentPayload, type Reservation,
+} from '@/api/reservations.ts'
+import FlightInfo from "@/components/FlightInfo.tsx";
 
 export const Route = createFileRoute('/flights/$flightId/payment')({
     component: FlightPaymentPage,
@@ -23,11 +27,11 @@ export const Route = createFileRoute('/flights/$flightId/payment')({
 function FlightPaymentPage() {
     const {flightId} = Route.useParams()
     const navigate = useNavigate({from: Route.fullPath})
-    const queryClient = useQueryClient()
+    const queryClient = useQueryClient();
 
     const {data: flight, isLoading: isFlightLoading} = useQuery({
         queryKey: ['flight', flightId],
-        queryFn: () => getFlightById(flightId),
+        queryFn: () => getFlightById(+flightId),
     })
 
     const [formValues, setFormValues] = useState<PaymentPayload>({
@@ -44,17 +48,18 @@ function FlightPaymentPage() {
         error,
     } = useMutation({
         mutationFn: (payload: PaymentPayload) => {
-            const [firstName, lastName] = payload.nameOnCard.split(' ');
+            const lastSpace = payload.nameOnCard.lastIndexOf(' ');
+            const firstName = payload.nameOnCard.slice(0, lastSpace);
+            const lastName = payload.nameOnCard.slice(lastSpace + 1);
             return payForFlight({flightId, firstName, lastName});
         },
-        onSuccess: (result) => {
-            // Optionally refresh any related queries
-            queryClient.invalidateQueries({queryKey: ['flight', flightId]})
-
+        onSuccess: (result: Reservation) => {
+            const {confirmationCode, lastName} = result;
+            queryClient.setQueryData(['reservation', [confirmationCode, lastName]], result);
             navigate({
-                to: '/flights/$flightId/confirmation',
-                params: {flightId},
-                search: {confirmationCode: result.confirmationCode},
+                to: '/reservations/$confirmationCode',
+                params: {confirmationCode},
+                search: {lastName, confirmation: true},
             })
         },
     })
@@ -66,9 +71,9 @@ function FlightPaymentPage() {
         setFormValues((prev: any) => ({...prev, [name]: value}))
     }
 
-    const handleSubmit = (e: FormEvent) => {
+    const handleSubmit = async (e: FormEvent) => {
         e.preventDefault()
-        mutate(formValues)
+        mutate(formValues);
     }
 
     return (
@@ -79,30 +84,9 @@ function FlightPaymentPage() {
 
             <Card sx={{mb: 3}}>
                 <CardContent>
-                    {isFlightLoading && <Typography>Loading flight…</Typography>}
-                    {flight && (
-                        <>
-                            <Typography variant="subtitle1">
-                                Flight ID: {flight.id}
-                            </Typography>
-                            <Typography variant="subtitle1">
-                                Flight Code: {flight.flightCode}
-                            </Typography>
-                            <Typography variant="body2">
-                                {flight.origin} → {flight.destination}
-                            </Typography>
-                            <Typography variant="body2">
-                                Airline: {flight.airline}
-                            </Typography>
-                            <Typography variant="body2" sx={{mb: 1}}>
-                                Departure: {flight.departureTime}, Arrival:{' '}
-                                {flight.arrivalTime}
-                            </Typography>
-                            <Typography variant="h6">
-                                Total (1 passenger): ${flight.price}
-                            </Typography>
-                        </>
-                    )}
+                    {isFlightLoading ? <Typography>Loading flight…</Typography>
+                        :
+                        <FlightInfo flight={flight!}/>}
                 </CardContent>
             </Card>
 
@@ -110,7 +94,6 @@ function FlightPaymentPage() {
                 <CardContent>
                     <Box
                         component="form"
-                        onSubmit={handleSubmit}
                         sx={{display: 'flex', flexDirection: 'column', gap: 2}}
                     >
                         <TextField
@@ -154,19 +137,18 @@ function FlightPaymentPage() {
                                 {(error as Error)?.message ?? 'Payment failed'}
                             </Typography>
                         )}
-
-                        <Box sx={{display: 'flex', justifyContent: 'flex-end', mt: 2}}>
-                            <Button
-                                type="submit"
-                                variant="contained"
-                                disabled={isPending}
-                                startIcon={isPending ? <CircularProgress size={16}/> : undefined}
-                            >
-                                {isPending ? 'Processing…' : 'Pay Now'}
-                            </Button>
-                        </Box>
                     </Box>
                 </CardContent>
+                <CardActions>
+                    <Button
+                        variant="contained"
+                        onClick={handleSubmit}
+                        disabled={isPending}
+                        startIcon={isPending ? <CircularProgress size={16}/> : undefined}
+                    >
+                        {isPending ? 'Processing…' : 'Pay Now'}
+                    </Button>
+                </CardActions>
             </Card>
         </Box>
     )
