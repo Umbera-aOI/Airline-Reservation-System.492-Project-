@@ -1,19 +1,19 @@
-import { Outlet, createRootRouteWithContext } from '@tanstack/react-router'
-import { Box } from '@mui/material'
+import {Outlet, createRootRouteWithContext} from '@tanstack/react-router'
+import {Box} from '@mui/material'
 
 import Header from '@/components/Header'
 
-import type { QueryClient } from '@tanstack/react-query'
+import type {QueryClient} from '@tanstack/react-query'
 
 interface MyRouterContext {
-  queryClient: QueryClient
+    queryClient: QueryClient
 }
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
-  component: () => (
-    <Box>
-        <Header />
-        <Outlet />
-    </Box>
-  ),
+    component: () => (
+        <Box>
+            <Header/>
+            <Outlet/>
+        </Box>
+    ),
 })
