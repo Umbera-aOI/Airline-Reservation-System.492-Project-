@@ -1,7 +1,7 @@
 import {type FormEvent, useState} from 'react'
 import {createFileRoute, useNavigate} from '@tanstack/react-router'
 import {useQuery} from '@tanstack/react-query'
-import * as dayjs from 'dayjs'
+import dayjs from 'dayjs'
 import {
     Autocomplete,
     Box,
@@ -22,8 +22,10 @@ import {
     searchFlights,
     getOrigins,
     getDestinations,
+    getDates
 } from '@/api/flights'
 import FlightsTable from "@/components/FlightsTable.tsx";
+import type {PickerValidDate} from "@mui/x-date-pickers/models"
 
 export const Route = createFileRoute('/')({
     component: FlightsSearchPage,
@@ -59,9 +61,16 @@ function FlightsSearchPage() {
     })
 
     const destinationsQuery = useQuery({
-        queryKey: ['destinations', formValues.origin],
+        queryKey: ['destinations', formValues.origin ?? null],
         queryFn: () => {
             return getDestinations(formValues.origin)
+        },
+    })
+
+    const datesQuery = useQuery({
+        queryKey: ['dates', formValues.origin ?? null, formValues.destination ?? null],
+        queryFn: () => {
+            return getDates(formValues.origin, formValues.destination)
         },
     })
     const handleSubmit = (e: FormEvent) => {
@@ -76,6 +85,13 @@ function FlightsSearchPage() {
             to: '/flights/$flightId/payment',
             params: {flightId: flight.id.toString()},
         })
+    }
+
+    const shouldDisableDate = (day: PickerValidDate) => {
+        console.log(dayjs);
+        if (day.isBefore(dayjs().startOf('day'))) return true;
+        if (!datesQuery.data) return true;
+        return !datesQuery.data.some(date => date.isSame(day, 'day'))
     }
     return (
         <Box sx={{maxWidth: 900, mx: 'auto', mt: 4}}>
@@ -114,7 +130,7 @@ function FlightsSearchPage() {
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <DatePicker label="Date"
                                         value={formValues.date}
-                                        disablePast
+                                        shouldDisableDate={shouldDisableDate}
                                         onChange={(value: dayjs.Dayjs | null) =>
                                             setFormValues((prev) => ({...prev, date: value}))
                                         }

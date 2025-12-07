@@ -5,6 +5,8 @@ export class CreateFlightDto {
 
     date: Date;
 
+    flightTime: number;
+
     price: number;
 
     flightCode: string;

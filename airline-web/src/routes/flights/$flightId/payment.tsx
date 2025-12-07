@@ -22,8 +22,7 @@ import FlightInfo from "@/components/FlightInfo.tsx";
 
 export const Route = createFileRoute('/flights/$flightId/payment')({
     component: FlightPaymentPage,
-    loader: ({context}) => context.userMutation.data,
-
+    loader: ({context}) => context.queryClient.getQueryData(['jwtToken']),
 })
 
 function FlightPaymentPage() {

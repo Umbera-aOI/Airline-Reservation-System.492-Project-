@@ -15,6 +15,9 @@ export class Flight {
     @Column()
     date: Date;
 
+    @Column({default: 120})
+    flightTime: number;
+
     @Column()
     price: number;
 

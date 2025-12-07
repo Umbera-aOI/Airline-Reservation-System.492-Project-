@@ -8,17 +8,15 @@ import * as TanStackQueryProvider from './integrations/tanstack-query/root-provi
 import {routeTree} from './routeTree.gen'
 
 import './styles.css'
-import reportWebVitals from './reportWebVitals.ts'
-import {useMutation} from "@tanstack/react-query";
 
 // Create a new router instance
 
 const TanStackQueryProviderContext = TanStackQueryProvider.getContext()
+
 const router = createRouter({
     routeTree,
     context: {
         ...TanStackQueryProviderContext,
-        userMutation: undefined!
     },
     defaultPreload: 'intent',
     scrollRestoration: true,
@@ -33,17 +31,6 @@ declare module '@tanstack/react-router' {
     }
 }
 
-function App() {
-    const userMutation = useMutation({
-        mutationFn: ({jwtToken}: { jwtToken: string }) => {
-            return Promise.resolve(jwtToken);
-        },
-    })
-    return (
-        <RouterProvider router={router} context={{...TanStackQueryProviderContext, userMutation}}/>
-    );
-}
-
 // Render the app
 const rootElement = document.getElementById('app')
 if (rootElement && !rootElement.innerHTML) {
@@ -51,13 +38,8 @@ if (rootElement && !rootElement.innerHTML) {
     root.render(
         <StrictMode>
             <TanStackQueryProvider.Provider {...TanStackQueryProviderContext}>
-                <App/>
+                <RouterProvider router={router} context={{...TanStackQueryProviderContext}}/>
             </TanStackQueryProvider.Provider>
         </StrictMode>,
     )
 }
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals()

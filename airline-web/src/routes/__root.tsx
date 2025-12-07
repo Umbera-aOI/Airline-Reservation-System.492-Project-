@@ -1,6 +1,6 @@
 import {useState} from "react";
 import {Outlet, createRootRouteWithContext, useRouter} from '@tanstack/react-router'
-import {type QueryClient, type UseMutationResult} from '@tanstack/react-query'
+import {type QueryClient, useQueryClient} from '@tanstack/react-query'
 import {Box} from '@mui/material'
 
 import Header from '@/components/Header'
@@ -8,17 +8,16 @@ import Header from '@/components/Header'
 
 interface MyRouterContext {
     queryClient: QueryClient,
-    userMutation: UseMutationResult<string, unknown, { jwtToken: string }>
 }
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
     component: () => {
-        const userMutation = Route.useLoaderData()
-        const router = useRouter()
-        const [jwtToken, setJwtToken] = useState<string | undefined>()
+        const [jwtToken, setJwtToken] = useState<string | undefined>();
+        const queryClient = useQueryClient();
+        const router = useRouter();
 
         const handleLogin = async (jwtToken: string) => {
-            await userMutation.mutateAsync({jwtToken})
+            queryClient.setQueryData(['jwtToken'], jwtToken);
             setJwtToken(jwtToken);
             router.invalidate();
         }
@@ -29,5 +28,4 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
             </Box>
         );
     },
-    loader: ({context}) => context.userMutation,
 })

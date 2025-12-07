@@ -24,7 +24,7 @@ export class FlightsService {
             .where('flight.origin = :origin', {origin})
             .andWhere('flight.destination = :destination', {destination})
             .andWhere('flight.date < :endOfDay', {endOfDay: asDayjs.endOf('day').toDate()})
-            .andWhere('flight.date >= :beginningOfDay', {beginningOfDay: asDayjs.toDate()})
+            .andWhere('flight.date >= :startOfDay', {startOfDay: asDayjs.toDate()})
             .groupBy('flight.id')
             .having('flight.seatsAvailable > COUNT(reservation.id)')
             .getMany()
@@ -38,6 +38,7 @@ export class FlightsService {
         return JSON.stringify(
             await this.flightsRepository.createQueryBuilder('flights')
                 .select('origin').distinct()
+                .where('date >= :startOfDay', {startOfDay: dayjs().startOf('day').toDate()})
                 .execute()
                 .then(res => res.map(f => f.origin))
         );
@@ -45,16 +46,34 @@ export class FlightsService {
 
     async getDestinations(origin: String | undefined): Promise<string> {
         let query = this.flightsRepository.createQueryBuilder('flights')
-            .select('destination').distinct();
+            .select('destination').distinct()
+            .where('date >= :startOfDay', {startOfDay: dayjs().startOf('day').toDate()});
 
         if (origin) {
-            query = query.where('origin = :origin', {origin});
+            query = query.andWhere('origin = :origin', {origin});
         }
         return JSON.stringify(
             await query
                 .execute()
                 .then(res => res.map(f => f.destination))
         );
+    }
+
+    async getDates(origin: String | undefined, destination: String | undefined): Promise<string> {
+        let query = this.flightsRepository.createQueryBuilder('flights')
+            .select('date').distinct()
+            .where('date >= :startOfDay', {startOfDay: dayjs().startOf('day').toDate()});
+
+        if (origin) {
+            query = query.andWhere('origin = :origin', {origin});
+        }
+        if (destination) {
+            query = query.andWhere('destination = :destination', {destination});
+        }
+        const dates = await query.execute();
+        let days = {};
+        dates.forEach(d => days[dayjs(d.date).format('YYYY-MM-DD')] = true);
+        return JSON.stringify(Object.keys(days));
     }
 
     async remove(id: number): Promise<void> {

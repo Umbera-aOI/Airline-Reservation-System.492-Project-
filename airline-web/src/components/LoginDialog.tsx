@@ -6,7 +6,6 @@ import {
     Dialog,
     DialogActions,
     DialogContent,
-    DialogContentText,
     DialogTitle,
     Snackbar,
     TextField,
@@ -64,10 +63,6 @@ export default function LoginDialog({open, onClose}: { open: boolean, onClose: (
         <Dialog open={open} onClose={() => onClose()}>
             <DialogTitle>Login</DialogTitle>
             <DialogContent>
-                <DialogContentText>
-                    To subscribe to this website, please enter your email address here. We
-                    will send updates occasionally.
-                </DialogContentText>
                 <Box
                     id="login-form"
                     component="form"

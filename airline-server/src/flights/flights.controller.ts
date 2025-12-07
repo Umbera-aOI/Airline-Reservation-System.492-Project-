@@ -37,6 +37,11 @@ export class FlightsController {
         return await this.flightsService.getDestinations(origin);
     }
 
+    @Get('dates')
+    async getDates(@Query('origin') origin: string, @Query('destination') destination: string): Promise<string> {
+        return await this.flightsService.getDates(origin, destination);
+    }
+
     @UseGuards(AdminGuard)
     @Post()
     async create(@Body() data: CreateFlightDto[]): Promise<string> {

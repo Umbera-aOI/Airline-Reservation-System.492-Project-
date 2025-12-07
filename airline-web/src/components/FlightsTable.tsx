@@ -72,83 +72,84 @@ export default ({
         setPriceFilter(e.target.value as typeof priceFilter)
     }
 
+    return (
+        <Card>
+            <CardContent>
+                <Box
+                    sx={{
+                        display: 'flex',
+                        flexWrap: 'wrap',
+                        gap: 2,
+                        mb: 2,
+                    }}
+                >
+                    <FormControl sx={{minWidth: 150}}>
+                        <InputLabel id="time-filter-label">Time</InputLabel>
+                        <Select
+                            labelId="time-filter-label"
+                            label="Time"
+                            value={timeFilter}
+                            onChange={handleTimeFilterChange}
+                            size="small"
+                        >
+                            <MenuItem value="all">All</MenuItem>
+                            <MenuItem value="morning">Morning</MenuItem>
+                            <MenuItem value="afternoon">Afternoon</MenuItem>
+                            <MenuItem value="evening">Evening</MenuItem>
+                        </Select>
+                    </FormControl>
 
-    return filteredFlights.length === 0 ?
-        (<Typography>No flights match your filters.</Typography>)
-        : (
-            <Card>
-                <CardContent>
-                    <Box
-                        sx={{
-                            display: 'flex',
-                            flexWrap: 'wrap',
-                            gap: 2,
-                            mb: 2,
-                        }}
-                    >
-                        <FormControl sx={{minWidth: 150}}>
-                            <InputLabel id="time-filter-label">Time</InputLabel>
-                            <Select
-                                labelId="time-filter-label"
-                                label="Time"
-                                value={timeFilter}
-                                onChange={handleTimeFilterChange}
-                                size="small"
-                            >
-                                <MenuItem value="all">All</MenuItem>
-                                <MenuItem value="morning">Morning</MenuItem>
-                                <MenuItem value="afternoon">Afternoon</MenuItem>
-                                <MenuItem value="evening">Evening</MenuItem>
-                            </Select>
-                        </FormControl>
-
-                        <FormControl sx={{minWidth: 150}}>
-                            <InputLabel id="price-filter-label">Price</InputLabel>
-                            <Select
-                                labelId="price-filter-label"
-                                label="Price"
-                                value={priceFilter}
-                                onChange={handlePriceFilterChange}
-                                size="small"
-                            >
-                                <MenuItem value="all">All</MenuItem>
-                                <MenuItem value="low">Low (&lt; $150)</MenuItem>
-                                <MenuItem value="medium">$150 – $249</MenuItem>
-                                <MenuItem value="high">High (≥ $250)</MenuItem>
-                            </Select>
-                        </FormControl>
-                    </Box>
-                    <Table size="small">
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>Flight Code</TableCell>
-                                <TableCell>Departure</TableCell>
-                                <TableCell>Arrival</TableCell>
-                                <TableCell>Price</TableCell>
-                                <TableCell align="right">Action</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {filteredFlights.map((flight) => (
-                                <TableRow key={flight.id} hover>
-                                    <TableCell>{flight.flightCode}</TableCell>
-                                    <TableCell>{flight.departureTime}</TableCell>
-                                    <TableCell>{flight.arrivalTime}</TableCell>
-                                    <TableCell>${flight.price}</TableCell>
-                                    <TableCell align="right">
-                                        <Button
-                                            variant="outlined"
-                                            size="small"
-                                            onClick={() => handleSelectFlight(flight)}
-                                        >
-                                            Select
-                                        </Button>
-                                    </TableCell>
+                    <FormControl sx={{minWidth: 150}}>
+                        <InputLabel id="price-filter-label">Price</InputLabel>
+                        <Select
+                            labelId="price-filter-label"
+                            label="Price"
+                            value={priceFilter}
+                            onChange={handlePriceFilterChange}
+                            size="small"
+                        >
+                            <MenuItem value="all">All</MenuItem>
+                            <MenuItem value="low">Low (&lt; $150)</MenuItem>
+                            <MenuItem value="medium">$150 – $249</MenuItem>
+                            <MenuItem value="high">High (≥ $250)</MenuItem>
+                        </Select>
+                    </FormControl>
+                </Box>
+                {filteredFlights.length === 0 ?
+                    (<Typography>No flights match your filters.</Typography>)
+                    : (
+                        <Table size="small">
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>Flight Code</TableCell>
+                                    <TableCell>Departure</TableCell>
+                                    <TableCell>Arrival</TableCell>
+                                    <TableCell>Price</TableCell>
+                                    <TableCell align="right">Action</TableCell>
                                 </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </CardContent>
-            </Card>
-        );
+                            </TableHead>
+                            <TableBody>
+                                {filteredFlights.map((flight) => (
+                                    <TableRow key={flight.id} hover>
+                                        <TableCell>{flight.flightCode}</TableCell>
+                                        <TableCell>{flight.departureTime}</TableCell>
+                                        <TableCell>{flight.arrivalTime}</TableCell>
+                                        <TableCell>${flight.price}</TableCell>
+                                        <TableCell align="right">
+                                            <Button
+                                                variant="outlined"
+                                                size="small"
+                                                onClick={() => handleSelectFlight(flight)}
+                                            >
+                                                Select
+                                            </Button>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    )}
+            </CardContent>
+        </Card>
+    );
 }
