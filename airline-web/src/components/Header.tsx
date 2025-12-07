@@ -10,25 +10,16 @@ import {
     Box
 } from '@mui/material';
 import {Menu as MenuIcon} from '@mui/icons-material';
-import {useNavigate} from "@tanstack/react-router";
-import {Route} from "@/routes/reservations/search.tsx";
 import LoginDialog from "@/components/LoginDialog.tsx";
-import {useMutation} from "@tanstack/react-query";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import {useRouter} from "@tanstack/react-router";
 
-export default function Header() {
+export default function Header({onLogin, jwtToken}: { onLogin: (jwtToken: string) => void, jwtToken?: string }) {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [loginDialogOpen, setLoginDialogOpen] = useState(false);
-    const navigate = useNavigate({from: Route.fullPath});
+    const router = useRouter()
 
     const open = !!anchorEl;
-
-    const userMutation = useMutation({
-        mutationFn: ({jwtToken}: { jwtToken: string }) => {
-            return Promise.resolve(jwtToken);
-        },
-    })
-
     const handleClickMenu = (event: MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
     };
@@ -41,19 +32,19 @@ export default function Header() {
     };
     const handleCloseLoginDialog = (jwtToken?: string) => {
         if (jwtToken) {
-            userMutation.mutate({jwtToken});
+            onLogin(jwtToken);
         }
         setLoginDialogOpen(false);
     };
     const handleClickBookFlight = () => {
         setAnchorEl(null);
-        navigate({
+        router.navigate({
             to: '/'
         });
     };
     const handleClickFindReservation = () => {
         setAnchorEl(null);
-        navigate({
+        router.navigate({
             to: '/reservations/search'
         });
     };
@@ -82,7 +73,7 @@ export default function Header() {
                     <Typography variant="h6" component="div" sx={{flexGrow: 1}}>
                         Airline Reservation System
                     </Typography>
-                    {!userMutation.isPending && userMutation.data ?
+                    {!!jwtToken ?
                         <IconButton color='inherit'><AccountCircleIcon/></IconButton> :
                         <Button color='inherit' onClick={handleClickLogin}>Login</Button>}
                 </Toolbar>
