@@ -1,7 +1,9 @@
+import {type ReactNode} from "react";
 import {QueryClient} from '@tanstack/react-query'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import {PersistQueryClientProvider} from '@tanstack/react-query-persist-client'
 import {createAsyncStoragePersister} from '@tanstack/query-async-storage-persister'
+import {invalidateRoutes} from "@/main.tsx";
 
 const asyncStoragePersister = createAsyncStoragePersister({
     storage: AsyncStorage,
@@ -28,7 +30,7 @@ export function Provider({
                              children,
                              queryClient,
                          }: {
-    children: React.ReactNode
+    children: ReactNode
     queryClient: QueryClient
 }) {
     return (
@@ -37,7 +39,7 @@ export function Provider({
             persistOptions={{
                 persister: asyncStoragePersister,
             }}
-            onSuccess={() => queryClient.refetchQueries()}
+            onSuccess={invalidateRoutes}
         >
             {children}
         </PersistQueryClientProvider>

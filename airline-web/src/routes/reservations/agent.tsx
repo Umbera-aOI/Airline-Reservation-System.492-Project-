@@ -1,5 +1,5 @@
 import {createFileRoute} from '@tanstack/react-router'
-import {useIsRestoring, useQuery} from '@tanstack/react-query'
+import {useQuery} from '@tanstack/react-query'
 import {
     Box,
     CircularProgress,
@@ -11,25 +11,21 @@ import {
     Typography,
 } from '@mui/material'
 import {getAgentReservations} from '@/api/reservations.ts'
+import {useAuth} from "@/api/auth.ts";
 
 export const Route = createFileRoute(
     '/reservations/agent'
 )({
     component: AgentReservations,
-    loader: ({context}) => context.queryClient.getQueryData(['jwtToken']),
 })
 
 function AgentReservations() {
-    const jwtToken = Route.useLoaderData();
+    const jwtToken = useAuth();
     const {data: reservations, isError, isLoading} = useQuery({
         queryKey: ['agent-reservations', jwtToken],
         queryFn: () => getAgentReservations(jwtToken!),
         enabled: !!jwtToken
     })
-    const isRestoring = useIsRestoring();
-    console.log(isRestoring);
-    console.log(jwtToken);
-
     return !!jwtToken ? (
         <Box sx={{maxWidth: 600, mx: 'auto', mt: 4}}>
             {

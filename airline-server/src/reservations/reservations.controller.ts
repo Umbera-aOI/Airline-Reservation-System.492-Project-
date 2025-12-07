@@ -24,7 +24,6 @@ export class ReservationsController {
     @UseGuards(AuthGuard)
     @Get('by-agent')
     async getProfile(@Request() req) {
-        console.log(req.user);
         return this.reservationsService.findByAgent(req.user.sub);
     }
 }

@@ -88,7 +88,6 @@ function FlightsSearchPage() {
     }
 
     const shouldDisableDate = (day: PickerValidDate) => {
-        console.log(dayjs);
         if (day.isBefore(dayjs().startOf('day'))) return true;
         if (!datesQuery.data) return true;
         return !datesQuery.data.some(date => date.isSame(day, 'day'))

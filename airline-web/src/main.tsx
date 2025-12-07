@@ -31,6 +31,11 @@ declare module '@tanstack/react-router' {
     }
 }
 
+
+export function invalidateRoutes() {
+    return router.invalidate();
+}
+
 // Render the app
 const rootElement = document.getElementById('app')
 if (rootElement && !rootElement.innerHTML) {
