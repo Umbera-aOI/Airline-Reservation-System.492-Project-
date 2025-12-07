@@ -48,6 +48,12 @@ export default function Header({onLogin, jwtToken}: { onLogin: (jwtToken: string
             to: '/reservations/search'
         });
     };
+    const handleViewAgentReservations = () => {
+        setAnchorEl(null);
+        router.navigate({
+            to: '/reservations/agent'
+        });
+    };
     return (
         <Box>
             <AppBar position="static">
@@ -69,6 +75,9 @@ export default function Header({onLogin, jwtToken}: { onLogin: (jwtToken: string
                     >
                         <MenuItem onClick={handleClickBookFlight}>Book Flight</MenuItem>
                         <MenuItem onClick={handleClickFindReservation}>Find Reservation</MenuItem>
+                        {!!jwtToken &&
+                            <MenuItem onClick={handleViewAgentReservations}>View Agent Reservations</MenuItem>
+                        }
                     </Menu>
                     <Typography variant="h6" component="div" sx={{flexGrow: 1}}>
                         Airline Reservation System

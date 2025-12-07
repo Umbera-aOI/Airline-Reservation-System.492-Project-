@@ -22,10 +22,13 @@ import FlightInfo from "@/components/FlightInfo.tsx";
 
 export const Route = createFileRoute('/flights/$flightId/payment')({
     component: FlightPaymentPage,
+    loader: ({context}) => context.userMutation.data,
+
 })
 
 function FlightPaymentPage() {
     const {flightId} = Route.useParams()
+    const jwtToken = Route.useLoaderData()
     const navigate = useNavigate({from: Route.fullPath})
     const queryClient = useQueryClient();
 
@@ -51,7 +54,7 @@ function FlightPaymentPage() {
             const lastSpace = payload.nameOnCard.lastIndexOf(' ');
             const firstName = payload.nameOnCard.slice(0, lastSpace);
             const lastName = payload.nameOnCard.slice(lastSpace + 1);
-            return payForFlight({flightId, firstName, lastName});
+            return payForFlight({flightId, firstName, lastName}, jwtToken);
         },
         onSuccess: (result: Reservation) => {
             const {confirmationCode, lastName} = result;

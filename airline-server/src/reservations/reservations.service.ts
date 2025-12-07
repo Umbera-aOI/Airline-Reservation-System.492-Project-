@@ -15,9 +15,10 @@ export class ReservationsService {
     ) {
     }
 
-    async create(createReservationDto: CreateReservationDto) {
+    async create(createReservationDto: CreateReservationDto, agentId?: number) {
         const reservation = {
             ...createReservationDto,
+            agentId,
             flight: await this.flightsRepository.findOneByOrFail({id: createReservationDto.flightId}),
             confirmationCode: Math.random().toString(36).substring(2, 7).toUpperCase()
         }
@@ -29,5 +30,11 @@ export class ReservationsService {
 
     async findConfirmation(confirmationCode: string, lastName: string) {
         return JSON.stringify(await this.reservationsRepository.findOneByOrFail({confirmationCode, lastName}));
+    }
+
+    async findByAgent(agentId: number) {
+        return JSON.stringify(
+            await this.reservationsRepository.findBy({agentId})
+        );
     }
 }

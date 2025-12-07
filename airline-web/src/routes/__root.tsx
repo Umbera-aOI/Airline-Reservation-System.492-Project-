@@ -1,31 +1,33 @@
-import {Outlet, createRootRouteWithContext} from '@tanstack/react-router'
+import {useState} from "react";
+import {Outlet, createRootRouteWithContext, useRouter} from '@tanstack/react-router'
+import {type QueryClient, type UseMutationResult} from '@tanstack/react-query'
 import {Box} from '@mui/material'
 
 import Header from '@/components/Header'
 
-import {type QueryClient, useMutation} from '@tanstack/react-query'
 
 interface MyRouterContext {
-    queryClient: QueryClient
+    queryClient: QueryClient,
+    userMutation: UseMutationResult<string, unknown, { jwtToken: string }>
 }
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
     component: () => {
-        const userMutation = useMutation({
-            mutationFn: ({jwtToken}: { jwtToken: string }) => {
-                return Promise.resolve(jwtToken);
-            },
-        })
+        const userMutation = Route.useLoaderData()
+        const router = useRouter()
+        const [jwtToken, setJwtToken] = useState<string | undefined>()
 
-        const handleLogin = (jwtToken: string) => {
-            userMutation.mutate({jwtToken})
+        const handleLogin = async (jwtToken: string) => {
+            await userMutation.mutateAsync({jwtToken})
+            setJwtToken(jwtToken);
+            router.invalidate();
         }
-
         return (
             <Box>
-                <Header onLogin={handleLogin} jwtToken={userMutation.data}/>
+                <Header onLogin={handleLogin} jwtToken={jwtToken}/>
                 <Outlet/>
             </Box>
         );
     },
+    loader: ({context}) => context.userMutation,
 })

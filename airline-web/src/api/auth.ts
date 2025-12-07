@@ -11,7 +11,7 @@ export async function login(
     });
     const response = await fetch(request);
     if (!response.ok) throw new Error(response.statusText);
-    return response.text();
+    return response.json().then(json => json.access_token);
 }
 
 export async function signup(

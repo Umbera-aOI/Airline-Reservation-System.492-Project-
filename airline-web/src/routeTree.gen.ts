@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ReservationsSearchRouteImport } from './routes/reservations/search'
+import { Route as ReservationsAgentRouteImport } from './routes/reservations/agent'
 import { Route as ReservationsConfirmationCodeRouteImport } from './routes/reservations/$confirmationCode'
 import { Route as FlightsFlightIdPaymentRouteImport } from './routes/flights/$flightId/payment'
 
@@ -22,6 +23,11 @@ const IndexRoute = IndexRouteImport.update({
 const ReservationsSearchRoute = ReservationsSearchRouteImport.update({
   id: '/reservations/search',
   path: '/reservations/search',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReservationsAgentRoute = ReservationsAgentRouteImport.update({
+  id: '/reservations/agent',
+  path: '/reservations/agent',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ReservationsConfirmationCodeRoute =
@@ -39,12 +45,14 @@ const FlightsFlightIdPaymentRoute = FlightsFlightIdPaymentRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/reservations/$confirmationCode': typeof ReservationsConfirmationCodeRoute
+  '/reservations/agent': typeof ReservationsAgentRoute
   '/reservations/search': typeof ReservationsSearchRoute
   '/flights/$flightId/payment': typeof FlightsFlightIdPaymentRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/reservations/$confirmationCode': typeof ReservationsConfirmationCodeRoute
+  '/reservations/agent': typeof ReservationsAgentRoute
   '/reservations/search': typeof ReservationsSearchRoute
   '/flights/$flightId/payment': typeof FlightsFlightIdPaymentRoute
 }
@@ -52,6 +60,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/reservations/$confirmationCode': typeof ReservationsConfirmationCodeRoute
+  '/reservations/agent': typeof ReservationsAgentRoute
   '/reservations/search': typeof ReservationsSearchRoute
   '/flights/$flightId/payment': typeof FlightsFlightIdPaymentRoute
 }
@@ -60,18 +69,21 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/reservations/$confirmationCode'
+    | '/reservations/agent'
     | '/reservations/search'
     | '/flights/$flightId/payment'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/reservations/$confirmationCode'
+    | '/reservations/agent'
     | '/reservations/search'
     | '/flights/$flightId/payment'
   id:
     | '__root__'
     | '/'
     | '/reservations/$confirmationCode'
+    | '/reservations/agent'
     | '/reservations/search'
     | '/flights/$flightId/payment'
   fileRoutesById: FileRoutesById
@@ -79,6 +91,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ReservationsConfirmationCodeRoute: typeof ReservationsConfirmationCodeRoute
+  ReservationsAgentRoute: typeof ReservationsAgentRoute
   ReservationsSearchRoute: typeof ReservationsSearchRoute
   FlightsFlightIdPaymentRoute: typeof FlightsFlightIdPaymentRoute
 }
@@ -97,6 +110,13 @@ declare module '@tanstack/react-router' {
       path: '/reservations/search'
       fullPath: '/reservations/search'
       preLoaderRoute: typeof ReservationsSearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reservations/agent': {
+      id: '/reservations/agent'
+      path: '/reservations/agent'
+      fullPath: '/reservations/agent'
+      preLoaderRoute: typeof ReservationsAgentRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/reservations/$confirmationCode': {
@@ -119,6 +139,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ReservationsConfirmationCodeRoute: ReservationsConfirmationCodeRoute,
+  ReservationsAgentRoute: ReservationsAgentRoute,
   ReservationsSearchRoute: ReservationsSearchRoute,
   FlightsFlightIdPaymentRoute: FlightsFlightIdPaymentRoute,
 }

@@ -17,6 +17,19 @@ export type Flight = {
 }
 import {API_BASE_URL} from './common'
 
+function mapFlight(flight: any) {
+    return {
+        id: flight.id,
+        origin: flight.origin,
+        destination: flight.destination,
+        flightCode: flight.flightCode,
+        price: flight.price / 100.0,
+        departureTime: dayjs(flight.date).format('HH:mm'),
+        arrivalTime: dayjs(flight.date).add(4, 'hours').format('HH:mm'),
+    };
+}
+
+
 export async function searchFlights(
     params: FlightSearchParams,
 ): Promise<Flight[]> {
@@ -28,17 +41,7 @@ export async function searchFlights(
         method: "GET"
     });
     const response = await fetch(request);
-    return response.json().then((flights) => flights.map((flight: any) =>
-        ({
-                id: flight.id,
-                origin: flight.origin,
-                destination: flight.destination,
-                flightCode: flight.flightCode,
-                price: flight.price / 100.0,
-                departureTime: dayjs(flight.date).format('HH:mm'),
-                arrivalTime: dayjs(flight.date).add(4, 'hours').format('HH:mm'),
-            }
-        )));
+    return response.json().then((flights) => flights.map(mapFlight));
 }
 
 export async function getFlightById(id: number): Promise<Flight> {
@@ -46,17 +49,7 @@ export async function getFlightById(id: number): Promise<Flight> {
         method: "GET"
     });
     const response = await fetch(request);
-    return response.json().then((flight) =>
-        ({
-                id: flight.id,
-                origin: flight.origin,
-                destination: flight.destination,
-                flightCode: flight.flightCode,
-                price: flight.price / 100.0,
-                departureTime: dayjs(flight.date).format('HH:mm'),
-                arrivalTime: dayjs(flight.date).add(4, 'hours').format('HH:mm'),
-            }
-        ));
+    return response.json().then(mapFlight);
 }
 
 export async function getOrigins(): Promise<String[]> {
