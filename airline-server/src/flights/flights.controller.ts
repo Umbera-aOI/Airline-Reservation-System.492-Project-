@@ -1,6 +1,7 @@
-import {Body, Controller, Get, Param, Post, Query} from '@nestjs/common';
+import {Body, Controller, Get, Param, Post, Query, UseGuards} from '@nestjs/common';
 import {FlightsService} from './flights.service';
 import {CreateFlightDto} from "./dto/create-flight.dto";
+import {AdminGuard} from "../auth/admin.guard";
 
 @Controller('flights')
 export class FlightsController {
@@ -36,8 +37,9 @@ export class FlightsController {
         return await this.flightsService.getDestinations(origin);
     }
 
+    @UseGuards(AdminGuard)
     @Post()
-    async create(@Body() data: CreateFlightDto): Promise<string> {
+    async create(@Body() data: CreateFlightDto[]): Promise<string> {
         const flight = await this.flightsService.create(data);
         return JSON.stringify(flight);
     }

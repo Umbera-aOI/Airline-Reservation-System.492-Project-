@@ -6,6 +6,8 @@ import { FlightsModule } from './flights/flights.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ReservationsModule } from './reservations/reservations.module';
+import { AuthController } from './auth/auth.controller';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
     imports: [
@@ -22,8 +24,9 @@ import { ReservationsModule } from './reservations/reservations.module';
         UsersModule,
         FlightsModule,
         ReservationsModule,
+        AuthModule,
     ],
-    controllers: [AppController],
+    controllers: [AppController, AuthController],
     providers: [AppService],
 })
 export class AppModule {}

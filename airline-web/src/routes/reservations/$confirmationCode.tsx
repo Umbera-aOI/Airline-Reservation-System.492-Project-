@@ -51,13 +51,13 @@ function FlightConfirmationPage() {
                 !isLoading && !isError && reservation &&
                 <Box>
                     <Typography variant="h4" gutterBottom>
-                        Booking Confirmed
+                        {!!search.confirmation ? "Booking Confirmed" : "Reservation Found"}
                     </Typography>
 
                     <Card>
                         <CardContent>
                             <Typography variant="h6" gutterBottom>
-                                Thank you for your purchase!
+                                {!!search.confirmation ? "Thank you for your purchase!" : "I hope you enjoy your flight!"}
                             </Typography>
                             <FlightInfo flight={flight} reservation={reservation}/>
                         </CardContent>

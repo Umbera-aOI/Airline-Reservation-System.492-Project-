@@ -3,6 +3,7 @@ import {InjectRepository} from '@nestjs/typeorm';
 import {And, LessThan, MoreThanOrEqual, Repository} from 'typeorm';
 import {Flight} from './flight.entity';
 import dayjs from 'dayjs';
+import {CreateFlightDto} from "./dto/create-flight.dto";
 
 @Injectable()
 export class FlightsService {
@@ -60,7 +61,7 @@ export class FlightsService {
         await this.flightsRepository.delete(id);
     }
 
-    create(data: object): Promise<Flight> {
+    create(data: CreateFlightDto[]): Promise<Flight[]> {
         const flight = this.flightsRepository.create(data);
         return this.flightsRepository.save(flight);
     }
