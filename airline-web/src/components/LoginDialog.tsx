@@ -12,14 +12,12 @@ import {
 } from '@mui/material';
 import type {ChangeEvent} from "react";
 import {login} from "@/api/auth.ts";
-import {useQueryClient} from "@tanstack/react-query";
 
-export default function LoginDialog({open, onClose}: { open: boolean, onClose: (jwtToken?: string) => void }) {
+export default function LoginDialog({open, onClose}: { open: boolean, onClose: () => void }) {
     const [formData, setFormData] = React.useState({
         username: '',
         password: '',
     })
-    const queryClient = useQueryClient();
 
     const [severity, setSeverity] = React.useState<"success" | "error">('success');
     const [message, setMessage] = React.useState('');
@@ -34,19 +32,18 @@ export default function LoginDialog({open, onClose}: { open: boolean, onClose: (
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         try {
-            const jwtToken = await login(formData.username, formData.password);
-            queryClient.setQueryData(['user'], jwtToken);
-            handleSuccess(jwtToken);
+            await login(formData.username, formData.password);
+            handleSuccess();
         } catch (e) {
             handleFail();
         }
     };
 
-    const handleSuccess = (jwtToken: string) => {
+    const handleSuccess = () => {
         setSeverity('success');
         setMessage('Login successful!')
         setSnackbarOpen(true);
-        onClose(jwtToken);
+        onClose();
     }
 
     const handleFail = () => {

@@ -5,8 +5,20 @@ import {API_BASE_URL, headers} from './common'
 let jwtToken = localStorage.getItem('jwtToken');
 let callbackIndex = 0;
 let callbacksToCall: {
-    [index: number]: (jwtToken: string) => void;
+    [index: number]: (jwtToken: string | null) => void;
 } = {};
+
+function onLogin(callback: (jwtToken: string | null) => void) {
+    let index = callbackIndex++;
+    callbacksToCall[index] = callback;
+    return () => {
+        delete callbacksToCall[index];
+    }
+}
+
+function setJwtTokenOnCallbacks(jwtToken: string | null) {
+    Object.values(callbacksToCall).forEach(callback => callback(jwtToken));
+}
 
 export async function login(
     username: string,
@@ -22,7 +34,7 @@ export async function login(
     return response.json().then(json => {
         jwtToken = json.access_token;
         localStorage.setItem('jwtToken', jwtToken!);
-        Object.values(callbacksToCall).forEach(callback => callback(jwtToken!));
+        setJwtTokenOnCallbacks(jwtToken!);
         return jwtToken!;
     });
 }
@@ -42,12 +54,10 @@ export async function signup(
     return response.text();
 }
 
-export function onLogin(callback: (jwtToken: string) => void) {
-    let index = callbackIndex++;
-    callbacksToCall[index] = callback;
-    return () => {
-        delete callbacksToCall[index];
-    }
+export function logout() {
+    jwtToken = null;
+    localStorage.removeItem('jwtToken');
+    setJwtTokenOnCallbacks(null);
 }
 
 export function useAuth() {

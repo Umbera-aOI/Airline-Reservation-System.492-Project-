@@ -11,12 +11,16 @@ import {
 } from '@mui/material';
 import {Menu as MenuIcon} from '@mui/icons-material';
 import LoginDialog from "@/components/LoginDialog.tsx";
+import LogoutDialog from "@/components/LogoutDialog.tsx";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import {useRouter} from "@tanstack/react-router";
+import {useAuth} from "@/api/auth.ts";
 
-export default function Header({onLogin, jwtToken}: { onLogin: (jwtToken: string) => void, jwtToken?: string }) {
+export default function Header() {
+    const jwtToken = useAuth()
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [loginDialogOpen, setLoginDialogOpen] = useState(false);
+    const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
     const router = useRouter()
 
     const open = !!anchorEl;
@@ -24,17 +28,20 @@ export default function Header({onLogin, jwtToken}: { onLogin: (jwtToken: string
         setAnchorEl(event.currentTarget);
     };
 
-    const handleClickLogin = () => {
-        setLoginDialogOpen(true);
-    }
     const handleClose = () => {
         setAnchorEl(null);
     };
-    const handleCloseLoginDialog = (jwtToken?: string) => {
-        if (jwtToken) {
-            onLogin(jwtToken);
-        }
+    const handleClickLogin = () => {
+        setLoginDialogOpen(true);
+    }
+    const handleCloseLoginDialog = () => {
         setLoginDialogOpen(false);
+    };
+    const handleClickLogout = () => {
+        setLogoutDialogOpen(true);
+    }
+    const handleCloseLogoutDialog = () => {
+        setLogoutDialogOpen(false);
     };
     const handleClickBookFlight = () => {
         setAnchorEl(null);
@@ -83,11 +90,12 @@ export default function Header({onLogin, jwtToken}: { onLogin: (jwtToken: string
                         Airline Reservation System
                     </Typography>
                     {!!jwtToken ?
-                        <IconButton color='inherit'><AccountCircleIcon/></IconButton> :
+                        <IconButton color='inherit' onClick={handleClickLogout}><AccountCircleIcon/></IconButton> :
                         <Button color='inherit' onClick={handleClickLogin}>Login</Button>}
                 </Toolbar>
             </AppBar>
             <LoginDialog open={loginDialogOpen} onClose={handleCloseLoginDialog}/>
+            <LogoutDialog open={logoutDialogOpen} onClose={handleCloseLogoutDialog}/>
         </Box>
     );
 }
