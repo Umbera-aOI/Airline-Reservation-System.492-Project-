@@ -1,4 +1,4 @@
-import {Body, Controller, Get, Param, Post, Query, UseGuards} from '@nestjs/common';
+import {Body, Controller, Get, Header, Param, Post, Query, UseGuards} from '@nestjs/common';
 import {FlightsService} from './flights.service';
 import {CreateFlightDto} from "./dto/create-flight.dto";
 import {AdminGuard} from "../auth/admin.guard";
@@ -13,13 +13,14 @@ export class FlightsController {
         return JSON.stringify(await this.flightsService.findAll());
     }
 
+    // @Header('Content-Type', 'application/json')
     @Get('search')
     async search(
         @Query('origin') origin: string,
         @Query('destination') destination: string,
         @Query('date') date: string,
-    ): Promise<string> {
-        return JSON.stringify(await this.flightsService.search(origin, destination, date));
+    ) {
+        return await this.flightsService.search(origin, destination, date);
     }
 
     @Get('/by-id/:id')

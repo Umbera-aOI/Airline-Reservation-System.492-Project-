@@ -125,6 +125,7 @@ export default ({
                                     <TableCell>Departure</TableCell>
                                     <TableCell>Arrival</TableCell>
                                     <TableCell>Price</TableCell>
+                                    <TableCell>Seats Left</TableCell>
                                     <TableCell align="right">Action</TableCell>
                                 </TableRow>
                             </TableHead>
@@ -134,7 +135,8 @@ export default ({
                                         <TableCell>{flight.flightCode}</TableCell>
                                         <TableCell>{flight.departureTime}</TableCell>
                                         <TableCell>{flight.arrivalTime}</TableCell>
-                                        <TableCell>${flight.price}</TableCell>
+                                        <TableCell>${flight.price.toFixed(2)}</TableCell>
+                                        <TableCell>{flight.seatsAvailable - (flight.seatsReserved ?? 0)}</TableCell>
                                         <TableCell align="right">
                                             <Button
                                                 variant="outlined"

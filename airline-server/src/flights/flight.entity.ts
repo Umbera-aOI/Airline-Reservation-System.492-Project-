@@ -18,7 +18,7 @@ export class Flight {
     @Column({default: 120})
     flightTime: number;
 
-    @Column()
+    @Column({type: "int"})
     price: number;
 
     @Column({default: 'FL123'})

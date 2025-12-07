@@ -21,13 +21,16 @@ export class FlightsService {
         const asDayjs = dayjs(date).startOf('day')
         return this.flightsRepository.createQueryBuilder('flight')
             .leftJoin('flight.reservations', 'reservation')
+            .select('flight.*')
+            .addSelect('COUNT(reservation.id)::INTEGER', 'seatsReserved')
             .where('flight.origin = :origin', {origin})
             .andWhere('flight.destination = :destination', {destination})
             .andWhere('flight.date < :endOfDay', {endOfDay: asDayjs.endOf('day').toDate()})
             .andWhere('flight.date >= :startOfDay', {startOfDay: asDayjs.toDate()})
             .groupBy('flight.id')
+            .addGroupBy('reservation.id')
             .having('flight.seatsAvailable > COUNT(reservation.id)')
-            .getMany()
+            .getRawMany()
     }
 
     findOne(id: number): Promise<Flight | null> {

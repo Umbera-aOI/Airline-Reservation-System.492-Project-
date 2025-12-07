@@ -14,6 +14,8 @@ export type Flight = {
     price: number
     origin: string
     destination: string
+    seatsAvailable: number
+    seatsReserved?: number
 }
 import {API_BASE_URL} from './common'
 
@@ -26,6 +28,8 @@ function mapFlight(flight: any) {
         price: flight.price / 100.0,
         departureTime: dayjs(flight.date).format('HH:mm'),
         arrivalTime: dayjs(flight.date).add(flight.flightTime, 'minute').format('HH:mm'),
+        seatsAvailable: flight.seatsAvailable,
+        seatsReserved: flight.seatsReserved,
     };
 }
 

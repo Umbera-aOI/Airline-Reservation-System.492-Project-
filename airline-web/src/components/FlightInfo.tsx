@@ -21,7 +21,7 @@ export default function FlightInfo({flight, reservation}: { flight?: Flight, res
                 {flight.arrivalTime}
             </Typography>
             <Typography variant="h6">
-                Total (1 passenger): ${flight.price}
+                Total (1 passenger): ${flight.price.toFixed(2)}
             </Typography>
         </Box>
     );
