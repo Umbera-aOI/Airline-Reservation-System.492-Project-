@@ -16,7 +16,10 @@ export class Reservation {
     @Column()
     lastName: string;
 
-    @Column({nullable: false})
+    @Column({default: 22500})
+    price: number;
+
+    @Column()
     flightId: number;
 
     @Column({nullable: true})

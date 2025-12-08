@@ -1,14 +1,33 @@
 import {useEffect, useState} from "react";
 import {useRouter} from "@tanstack/react-router";
-import {API_BASE_URL, headers} from './common'
+import {API_BASE_URL, headers} from './common';
 
-let jwtToken = localStorage.getItem('jwtToken');
+export type User = {
+    jwtToken: string
+    username: string
+    role: string
+}
+
+let user: User | null = null;
+retrieveLocalStorage();
 let callbackIndex = 0;
 let callbacksToCall: {
-    [index: number]: (jwtToken: string | null) => void;
+    [index: number]: (user: User | null) => void;
 } = {};
 
-function onLogin(callback: (jwtToken: string | null) => void) {
+
+function retrieveLocalStorage() {
+    let jwtToken = localStorage.getItem('jwtToken');
+    if (jwtToken) {
+        user = {
+            jwtToken,
+            username: localStorage.getItem('username')!,
+            role: localStorage.getItem('role')!
+        }
+    }
+}
+
+function onLogin(callback: (user: User | null) => void) {
     let index = callbackIndex++;
     callbacksToCall[index] = callback;
     return () => {
@@ -16,8 +35,8 @@ function onLogin(callback: (jwtToken: string | null) => void) {
     }
 }
 
-function setJwtTokenOnCallbacks(jwtToken: string | null) {
-    Object.values(callbacksToCall).forEach(callback => callback(jwtToken));
+function setUserOnCallbacks(user: User | null) {
+    Object.values(callbacksToCall).forEach(callback => callback(user));
 }
 
 export async function login(
@@ -31,12 +50,13 @@ export async function login(
     });
     const response = await fetch(request);
     if (!response.ok) throw new Error(response.statusText);
-    return response.json().then(json => {
-        jwtToken = json.access_token;
-        localStorage.setItem('jwtToken', jwtToken!);
-        setJwtTokenOnCallbacks(jwtToken!);
-        return jwtToken!;
-    });
+    let asJson = await response.json();
+    let {access_token: jwtToken, role} = asJson;
+    localStorage.setItem('jwtToken', jwtToken);
+    localStorage.setItem('username', username);
+    localStorage.setItem('role', role);
+    setUserOnCallbacks({jwtToken, username, role});
+    return jwtToken!;
 }
 
 export async function signup(
@@ -55,20 +75,20 @@ export async function signup(
 }
 
 export function logout() {
-    jwtToken = null;
+    user = null;
     localStorage.removeItem('jwtToken');
-    setJwtTokenOnCallbacks(null);
+    setUserOnCallbacks(null);
 }
 
 export function useAuth() {
     const router = useRouter()
-    const [hookJwtToken, setHookJwtToken] = useState<string | null>(jwtToken)
+    const [hookUser, setHookUser] = useState<User | null>(user)
 
     useEffect(() =>
-        onLogin((token) => {
-            setHookJwtToken(token);
+        onLogin((user) => {
+            setHookUser(user);
             router.invalidate();
         }), [])
 
-    return hookJwtToken;
+    return hookUser;
 }

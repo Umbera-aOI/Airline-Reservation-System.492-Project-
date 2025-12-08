@@ -13,13 +13,15 @@ export type Reservation = {
     firstName: string
     lastName: string
     flightId: number
+    price: number
 }
 
 export async function payForFlight(input: {
     flightId: string,
     firstName: string,
     lastName: string,
-}, jwtToken?: string): Promise<Reservation> {
+    price: number,
+}, jwtToken: string | null): Promise<Reservation> {
     let requestHeaders = new Headers(headers);
     if (jwtToken) {
         requestHeaders.set('Authorization', 'Bearer ' + jwtToken);

@@ -4,6 +4,7 @@ import {Repository} from 'typeorm';
 import bcrypt from 'bcrypt'
 import {User} from './user.entity';
 import {CreateUserDto} from "./dto/create-user.dto";
+import {AgentStatisticsDto} from "./dto/agent-statistics.dto";
 
 @Injectable()
 export class UsersService {
@@ -40,6 +41,20 @@ export class UsersService {
             userParams['role'] = 'admin';
         }
         return this.usersRepository.save(this.usersRepository.create(userParams));
+    }
+
+    async getAgentStatistics(): Promise<AgentStatisticsDto[]> {
+        return this.usersRepository.createQueryBuilder('user')
+            .leftJoin('user.reservations', 'reservation')
+            .select('user.id', 'id')
+            .addSelect('user.username', 'username')
+            .addSelect('user.firstName', 'firstName')
+            .addSelect('user.lastName', 'lastName')
+            .addSelect('COUNT(reservation.id)::INTEGER', 'reservationsCount')
+            .addSelect('SUM(reservation.price)::INTEGER', 'reservationsProfit')
+            .where("user.role IN ('agent', 'admin')")
+            .groupBy('user.id')
+            .getRawMany<AgentStatisticsDto>()
     }
 
     delete(username: string) {

@@ -138,13 +138,19 @@ function FlightsSearchPage() {
                     </Box>
                 </CardContent>
                 <CardActions>
-                    <Box>
-                        <Typography variant="body2" sx={{mb: 1}}>
-                            Passenger count: 1
-                        </Typography>
+                    <Box
+                        sx={{
+                            display: 'grid',
+                            gridTemplateColumns: {xs: '1fr 1fr'},
+                            gap: 2,
+                            alignItems: 'flex-end',
+                        }}>
                         <Button onClick={handleSubmit} variant="contained">
                             Search
                         </Button>
+                        <Typography variant="body2" sx={{mb: 1}}>
+                            Passenger count: 1
+                        </Typography>
                     </Box>
                 </CardActions>
             </Card>

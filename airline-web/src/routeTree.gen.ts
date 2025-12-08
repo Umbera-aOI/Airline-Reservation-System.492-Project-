@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ReservationsSearchRouteImport } from './routes/reservations/search'
 import { Route as ReservationsAgentRouteImport } from './routes/reservations/agent'
 import { Route as ReservationsConfirmationCodeRouteImport } from './routes/reservations/$confirmationCode'
+import { Route as AdminAgentStatisticsRouteImport } from './routes/admin/agent-statistics'
 import { Route as FlightsFlightIdPaymentRouteImport } from './routes/flights/$flightId/payment'
 
 const IndexRoute = IndexRouteImport.update({
@@ -36,6 +37,11 @@ const ReservationsConfirmationCodeRoute =
     path: '/reservations/$confirmationCode',
     getParentRoute: () => rootRouteImport,
   } as any)
+const AdminAgentStatisticsRoute = AdminAgentStatisticsRouteImport.update({
+  id: '/admin/agent-statistics',
+  path: '/admin/agent-statistics',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FlightsFlightIdPaymentRoute = FlightsFlightIdPaymentRouteImport.update({
   id: '/flights/$flightId/payment',
   path: '/flights/$flightId/payment',
@@ -44,6 +50,7 @@ const FlightsFlightIdPaymentRoute = FlightsFlightIdPaymentRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin/agent-statistics': typeof AdminAgentStatisticsRoute
   '/reservations/$confirmationCode': typeof ReservationsConfirmationCodeRoute
   '/reservations/agent': typeof ReservationsAgentRoute
   '/reservations/search': typeof ReservationsSearchRoute
@@ -51,6 +58,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin/agent-statistics': typeof AdminAgentStatisticsRoute
   '/reservations/$confirmationCode': typeof ReservationsConfirmationCodeRoute
   '/reservations/agent': typeof ReservationsAgentRoute
   '/reservations/search': typeof ReservationsSearchRoute
@@ -59,6 +67,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin/agent-statistics': typeof AdminAgentStatisticsRoute
   '/reservations/$confirmationCode': typeof ReservationsConfirmationCodeRoute
   '/reservations/agent': typeof ReservationsAgentRoute
   '/reservations/search': typeof ReservationsSearchRoute
@@ -68,6 +77,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/admin/agent-statistics'
     | '/reservations/$confirmationCode'
     | '/reservations/agent'
     | '/reservations/search'
@@ -75,6 +85,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/admin/agent-statistics'
     | '/reservations/$confirmationCode'
     | '/reservations/agent'
     | '/reservations/search'
@@ -82,6 +93,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/admin/agent-statistics'
     | '/reservations/$confirmationCode'
     | '/reservations/agent'
     | '/reservations/search'
@@ -90,6 +102,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminAgentStatisticsRoute: typeof AdminAgentStatisticsRoute
   ReservationsConfirmationCodeRoute: typeof ReservationsConfirmationCodeRoute
   ReservationsAgentRoute: typeof ReservationsAgentRoute
   ReservationsSearchRoute: typeof ReservationsSearchRoute
@@ -126,6 +139,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ReservationsConfirmationCodeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/agent-statistics': {
+      id: '/admin/agent-statistics'
+      path: '/admin/agent-statistics'
+      fullPath: '/admin/agent-statistics'
+      preLoaderRoute: typeof AdminAgentStatisticsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/flights/$flightId/payment': {
       id: '/flights/$flightId/payment'
       path: '/flights/$flightId/payment'
@@ -138,6 +158,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminAgentStatisticsRoute: AdminAgentStatisticsRoute,
   ReservationsConfirmationCodeRoute: ReservationsConfirmationCodeRoute,
   ReservationsAgentRoute: ReservationsAgentRoute,
   ReservationsSearchRoute: ReservationsSearchRoute,

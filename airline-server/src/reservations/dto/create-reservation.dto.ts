@@ -3,5 +3,7 @@ export class CreateReservationDto {
 
     lastName: string;
 
-    flightId: number
+    flightId: number;
+    
+    price: number;
 }

@@ -19,16 +19,17 @@ import {
     type PaymentPayload, type Reservation,
 } from '@/api/reservations.ts'
 import FlightInfo from "@/components/FlightInfo.tsx";
+import {useAuth} from "@/api/auth.ts";
 
 export const Route = createFileRoute('/flights/$flightId/payment')({
     component: FlightPaymentPage,
-    loader: ({context}) => context.queryClient.getQueryData(['jwtToken']),
 })
 
 function FlightPaymentPage() {
-    const {flightId} = Route.useParams()
-    const jwtToken = Route.useLoaderData()
-    const navigate = useNavigate({from: Route.fullPath})
+    const {flightId} = Route.useParams();
+    const userData = useAuth();
+    const jwtToken = userData?.jwtToken ?? null;
+    const navigate = useNavigate({from: Route.fullPath});
     const queryClient = useQueryClient();
 
     const {data: flight, isLoading: isFlightLoading} = useQuery({
@@ -53,7 +54,7 @@ function FlightPaymentPage() {
             const lastSpace = payload.nameOnCard.lastIndexOf(' ');
             const firstName = payload.nameOnCard.slice(0, lastSpace);
             const lastName = payload.nameOnCard.slice(lastSpace + 1);
-            return payForFlight({flightId, firstName, lastName}, jwtToken);
+            return payForFlight({flightId, firstName, lastName, price: flight!.price}, jwtToken);
         },
         onSuccess: (result: Reservation) => {
             const {confirmationCode, lastName} = result;

@@ -1,27 +1,25 @@
 import * as React from 'react';
 import {
-    Alert,
     Box,
     Button,
     Dialog,
     DialogActions,
     DialogContent,
     DialogTitle,
-    Snackbar,
     TextField,
 } from '@mui/material';
 import type {ChangeEvent} from "react";
 import {login} from "@/api/auth.ts";
 
-export default function LoginDialog({open, onClose}: { open: boolean, onClose: () => void }) {
+export default function LoginDialog({open, onClose, openSnackbar}: {
+    open: boolean,
+    onClose: () => void,
+    openSnackbar: (message: string, severity: "success" | "error") => void
+}) {
     const [formData, setFormData] = React.useState({
         username: '',
         password: '',
     })
-
-    const [severity, setSeverity] = React.useState<"success" | "error">('success');
-    const [message, setMessage] = React.useState('');
-    const [snackbarOpen, setSnackbarOpen] = React.useState(false);
 
     const handleChange = (
         e: ChangeEvent<HTMLInputElement>,
@@ -40,20 +38,12 @@ export default function LoginDialog({open, onClose}: { open: boolean, onClose: (
     };
 
     const handleSuccess = () => {
-        setSeverity('success');
-        setMessage('Login successful!')
-        setSnackbarOpen(true);
+        openSnackbar('Login Successful!', 'success');
         onClose();
     }
 
     const handleFail = () => {
-        setSeverity('error');
-        setMessage('Login failed. Please try again.');
-        setSnackbarOpen(true);
-    }
-
-    const handleCloseSnackbar = () => {
-        setSnackbarOpen(false);
+        openSnackbar('Login failed. Please try again.', 'error');
     }
 
     return (
@@ -97,16 +87,6 @@ export default function LoginDialog({open, onClose}: { open: boolean, onClose: (
                     Login
                 </Button>
             </DialogActions>
-            <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleCloseSnackbar}>
-                <Alert
-                    onClose={handleCloseSnackbar}
-                    severity={severity}
-                    variant="filled"
-                    sx={{width: '100%'}}
-                >
-                    {message}
-                </Alert>
-            </Snackbar>
         </Dialog>
     );
 }

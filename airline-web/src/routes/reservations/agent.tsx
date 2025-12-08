@@ -20,7 +20,8 @@ export const Route = createFileRoute(
 })
 
 function AgentReservations() {
-    const jwtToken = useAuth();
+    const userData = useAuth();
+    const jwtToken = userData?.jwtToken;
     const {data: reservations, isError, isLoading} = useQuery({
         queryKey: ['agent-reservations', jwtToken],
         queryFn: () => getAgentReservations(jwtToken!),
@@ -44,7 +45,7 @@ function AgentReservations() {
                                 <TableCell>Flight ID</TableCell>
                                 <TableCell>First Name</TableCell>
                                 <TableCell>Last Name</TableCell>
-                                <TableCell>Confirmation Code</TableCell>
+                                <TableCell>Price</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -54,7 +55,7 @@ function AgentReservations() {
                                     <TableCell>{reservation.flightId}</TableCell>
                                     <TableCell>{reservation.firstName}</TableCell>
                                     <TableCell>{reservation.lastName}</TableCell>
-                                    <TableCell>{reservation.confirmationCode}</TableCell>
+                                    <TableCell>{reservation.price}</TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
