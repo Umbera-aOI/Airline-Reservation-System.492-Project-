@@ -1,9 +1,10 @@
-#### Running Code
+# Running Code
 Clone project, enter directory, and run `docker compose up`
 
-#### Initial Setup
-### Create Admin and Agents
+# Initial Setup
+## Create Admin and Agents
 Send POST call to server path (localhost:3001) `/auth/signup`
+
 Data Payload:
 ```json
 {
@@ -14,7 +15,9 @@ Data Payload:
 }
 ```
 The first user created will have an admin role, all subsequent users will be agents
+
 Admin is the only one who can create (and update/delete in the future) flights
+
 The response if successful will look like
 ```json
 {
@@ -22,10 +25,12 @@ The response if successful will look like
 }
 ```
 Copy this access token for creating flights
+
 This token can also be retrieved by logging in via `/auth/login` using just username and password
 
-### Create Flights
+## Create Flights
 Send POST call to server path (localhost:3001) `/flights`
+
 Data Payload:
 ```json
 [
@@ -62,3 +67,4 @@ You must attach an http header for authorization as the admin using the token re
 ```
 Authorization: Bearer <token>
 ```
+
