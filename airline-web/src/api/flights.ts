@@ -54,6 +54,19 @@ export async function getFlightById(id: number): Promise<Flight> {
     return response.json().then(mapFlight);
 }
 
+export async function deleteFlight(id: number, jwtToken: string): Promise<boolean> {
+    const request = new Request(`${API_BASE_URL}/flights/by-id/${id}`,
+        {
+            method: "DELETE",
+            headers: {
+                'Authorization': `Bearer ${jwtToken}`
+            }
+        });
+    const response = await fetch(request);
+    if (!response.ok) throw new Error(response.statusText);
+    return true;
+}
+
 export async function getOrigins(): Promise<String[]> {
     const request = new Request(`${API_BASE_URL}/flights/origins`);
     const response = await fetch(request);

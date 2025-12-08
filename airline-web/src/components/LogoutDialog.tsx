@@ -25,8 +25,8 @@ export default function LogoutDialog({open, onClose, openSnackbar}: {
         <Dialog open={open} onClose={() => onClose()}>
             <DialogTitle>Logout</DialogTitle>
             <DialogActions>
-                <Button variant={'outlined'} onClick={() => onClose()}>Cancel</Button>
-                <Button onClick={handleSubmit}>
+                <Button onClick={() => onClose()}>Cancel</Button>
+                <Button variant={'contained'} onClick={handleSubmit}>
                     Logout
                 </Button>
             </DialogActions>

@@ -28,7 +28,6 @@ function AgentStatistics() {
         enabled: !!jwtToken
     })
 
-    console.log(userData);
     return userData?.role == 'admin' ? (
         <Box sx={{maxWidth: 600, mx: 'auto', mt: 4}}>
             {

@@ -24,7 +24,7 @@ export async function payForFlight(input: {
 }, jwtToken: string | null): Promise<Reservation> {
     let requestHeaders = new Headers(headers);
     if (jwtToken) {
-        requestHeaders.set('Authorization', 'Bearer ' + jwtToken);
+        requestHeaders.set('Authorization', `Bearer ${jwtToken}`);
     }
     const request = new Request(`${API_BASE_URL}/reservations`, {
         method: "POST",

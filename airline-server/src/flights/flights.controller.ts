@@ -1,4 +1,4 @@
-import {Body, Controller, Get, Header, Param, Post, Query, UseGuards} from '@nestjs/common';
+import {Body, Controller, Delete, Get, Header, Param, Post, Query, UseGuards} from '@nestjs/common';
 import {FlightsService} from './flights.service';
 import {CreateFlightDto} from "./dto/create-flight.dto";
 import {AdminGuard} from "../auth/admin.guard";
@@ -9,8 +9,8 @@ export class FlightsController {
     }
 
     @Get()
-    async findAll(): Promise<string> {
-        return JSON.stringify(await this.flightsService.findAll());
+    async findAll() {
+        return await this.flightsService.findAll();
     }
 
     // @Header('Content-Type', 'application/json')
@@ -24,8 +24,8 @@ export class FlightsController {
     }
 
     @Get('/by-id/:id')
-    findOne(@Param('id') id: string) {
-        return this.flightsService.findOne(+id);
+    async findOne(@Param('id') id: string) {
+        return await this.flightsService.findOne(+id);
     }
 
     @Get('origins')
@@ -34,19 +34,24 @@ export class FlightsController {
     }
 
     @Get('destinations')
-    async getDestinations(@Query('origin') origin: string): Promise<string> {
+    async getDestinations(@Query('origin') origin: string) {
         return await this.flightsService.getDestinations(origin);
     }
 
     @Get('dates')
-    async getDates(@Query('origin') origin: string, @Query('destination') destination: string): Promise<string> {
+    async getDates(@Query('origin') origin: string, @Query('destination') destination: string) {
         return await this.flightsService.getDates(origin, destination);
     }
 
     @UseGuards(AdminGuard)
     @Post()
-    async create(@Body() data: CreateFlightDto[]): Promise<string> {
-        const flight = await this.flightsService.create(data);
-        return JSON.stringify(flight);
+    async create(@Body() data: CreateFlightDto[]) {
+        return await this.flightsService.create(data);
+    }
+
+    @UseGuards(AdminGuard)
+    @Delete('/by-id/:id')
+    async delete(@Param('id') id: string) {
+        return await this.flightsService.remove(+id);
     }
 }

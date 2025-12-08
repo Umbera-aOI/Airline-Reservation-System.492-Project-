@@ -1,13 +1,16 @@
 import {
+    Alert,
     Box,
     Button,
     Card,
     CardContent,
     FormControl,
+    IconButton,
     InputLabel,
     MenuItem,
     Select,
     type SelectChangeEvent,
+    Snackbar,
     Table,
     TableBody,
     TableCell,
@@ -15,8 +18,11 @@ import {
     TableRow,
     Typography,
 } from '@mui/material'
+import DeleteIcon from '@mui/icons-material/Delete';
 import type {Flight} from "@/api/flights.ts";
 import {useState} from "react";
+import {useAuth} from "@/api/auth.ts";
+import DeleteFlightDialog from "@/components/DeleteFlightDialog.tsx";
 
 export default ({
                     flightData,
@@ -25,8 +31,11 @@ export default ({
     flightData: Flight[],
     handleSelectFlight: (flight: Flight) => void,
 }) => {
-    const [timeFilter, setTimeFilter] = useState<string>('all')
-    const [priceFilter, setPriceFilter] = useState<string>('all')
+    const [timeFilter, setTimeFilter] = useState<string>('all');
+    const [priceFilter, setPriceFilter] = useState<string>('all');
+    const [deleteFlightConfirmationId, setDeleteFlightConfirmationId] = useState<number | null>(null);
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const userData = useAuth();
 
     const filteredFlights = flightData.filter((flight) => {
         // Time filter
@@ -70,6 +79,20 @@ export default ({
 
     const handlePriceFilterChange = (e: SelectChangeEvent) => {
         setPriceFilter(e.target.value as typeof priceFilter)
+    }
+
+    const handleClickDeleteFlight = (id: number) => {
+        setDeleteFlightConfirmationId(id);
+    }
+
+    const handleCloseFlightConfirmation = () => {
+        setDeleteFlightConfirmationId(null);
+    }
+    const handleOpenSnackbar = () => {
+        setSnackbarOpen(true);
+    }
+    const handleCloseSnackbar = () => {
+        setSnackbarOpen(false);
     }
 
     return (
@@ -126,7 +149,7 @@ export default ({
                                     <TableCell>Arrival</TableCell>
                                     <TableCell>Price</TableCell>
                                     <TableCell>Seats Left</TableCell>
-                                    <TableCell align="right">Action</TableCell>
+                                    <TableCell align="right">Actions</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
@@ -145,6 +168,12 @@ export default ({
                                             >
                                                 Select
                                             </Button>
+                                            {userData?.role == 'admin' &&
+                                                <IconButton color="error"
+                                                            onClick={() => handleClickDeleteFlight(flight.id)}>
+                                                    <DeleteIcon/>
+                                                </IconButton>
+                                            }
                                         </TableCell>
                                     </TableRow>
                                 ))}
@@ -152,6 +181,18 @@ export default ({
                         </Table>
                     )}
             </CardContent>
+            <DeleteFlightDialog onClose={handleCloseFlightConfirmation} openSnackbar={handleOpenSnackbar}
+                                flightId={deleteFlightConfirmationId}/>
+            <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleCloseSnackbar}>
+                <Alert
+                    onClose={handleCloseSnackbar}
+                    severity='success'
+                    variant="filled"
+                    sx={{width: '100%'}}
+                >
+                    Delete Flight Successful
+                </Alert>
+            </Snackbar>
         </Card>
     );
 }
