@@ -1,10 +1,11 @@
 import {API_BASE_URL, headers} from './common'
 
 export type PaymentPayload = {
-    cardNumber: string
-    nameOnCard: string
-    expiry: string // "MM/YY"
-    cvv: string
+    creditCardNumber: string,
+    firstName: string,
+    lastName: string,
+    expirationDate: string,
+    cvv: string,
 }
 
 export type Reservation = {
@@ -16,7 +17,23 @@ export type Reservation = {
     price: number
 }
 
-export async function payForFlight(input: {
+export async function payForFlight(input: PaymentPayload, jwtToken: string | null): Promise<boolean> {
+    let requestHeaders = new Headers(headers);
+    if (jwtToken) {
+        requestHeaders.set('Authorization', `Bearer ${jwtToken}`);
+    }
+    const request = new Request(`${API_BASE_URL}/payments/submit`, {
+        method: "POST",
+        body: JSON.stringify(input),
+        headers: requestHeaders
+    });
+    const response = await fetch(request);
+    if (!response.ok) throw new Error(response.statusText);
+    return true;
+}
+
+
+export async function bookReservation(input: {
     flightId: string,
     firstName: string,
     lastName: string,
@@ -48,6 +65,23 @@ export async function getReservation(
         throw new Error(response.statusText);
     }
     return response.json();
+}
+
+export async function deleteReservation(
+    confirmationCode: string, lastName: string
+): Promise<boolean> {
+    const urlParams = new URLSearchParams();
+    urlParams.append('confirmationCode', confirmationCode);
+    urlParams.append('lastName', lastName);
+    const request = new Request(`${API_BASE_URL}/reservations?${urlParams}`,
+        {
+            method: "DELETE"
+        });
+    const response = await fetch(request);
+    if (!response.ok) {
+        throw new Error(response.statusText);
+    }
+    return true;
 }
 
 export async function getAgentReservations(jwtToken: string): Promise<Reservation[]> {

@@ -85,7 +85,7 @@ export default ({
         setDeleteFlightConfirmationId(id);
     }
 
-    const handleCloseFlightConfirmation = () => {
+    const handleCloseDeleteFlightConfirmation = () => {
         setDeleteFlightConfirmationId(null);
     }
     const handleOpenSnackbar = () => {
@@ -181,7 +181,7 @@ export default ({
                         </Table>
                     )}
             </CardContent>
-            <DeleteFlightDialog onClose={handleCloseFlightConfirmation} openSnackbar={handleOpenSnackbar}
+            <DeleteFlightDialog onClose={handleCloseDeleteFlightConfirmation} openSnackbar={handleOpenSnackbar}
                                 flightId={deleteFlightConfirmationId}/>
             <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleCloseSnackbar}>
                 <Alert

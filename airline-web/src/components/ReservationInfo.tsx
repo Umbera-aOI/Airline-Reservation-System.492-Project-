@@ -1,7 +1,29 @@
-import {Typography, Box, Divider} from "@mui/material";
+import {Typography, Box, Divider, Button, Snackbar, Alert} from "@mui/material";
 import {type Reservation} from "@/api/reservations.ts";
+import {useState} from "react";
+import {useRouter} from "@tanstack/react-router";
+import DeleteReservationDialog from "@/components/DeleteReservationDialog.tsx";
 
 export default function ReservationInfo({reservation}: { reservation?: Reservation }) {
+    const router = useRouter();
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [confirmationCode, setConfirmationCode] = useState<string | null>(null);
+    const handleClickDeleteReservation = () => {
+        setConfirmationCode(reservation!.confirmationCode);
+    }
+
+    const handleOpenSnackbar = () => {
+        setSnackbarOpen(true);
+    }
+
+    const handleCloseSnackbar = () => {
+        setSnackbarOpen(false);
+        router.navigate({to: '/'});
+    }
+
+    const handleCloseDeleteReservationConfirmation = () => {
+        setConfirmationCode(null);
+    }
     return reservation && (
         <Box>
             <Typography variant="subtitle1">
@@ -11,6 +33,23 @@ export default function ReservationInfo({reservation}: { reservation?: Reservati
                 Name: {reservation.firstName} {reservation.lastName}
             </Typography>
             <Divider/>
+            <Button color='error' variant='contained' onClick={handleClickDeleteReservation}>
+                Delete Reservation
+            </Button>
+            <DeleteReservationDialog onClose={handleCloseDeleteReservationConfirmation}
+                                     openSnackbar={handleOpenSnackbar}
+                                     confirmationCode={confirmationCode} lastName={reservation.lastName!}/>
+
+            <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleCloseSnackbar}>
+                <Alert
+                    onClose={handleCloseSnackbar}
+                    severity='success'
+                    variant="filled"
+                    sx={{width: '100%'}}
+                >
+                    Delete Flight Successful
+                </Alert>
+            </Snackbar>
         </Box>
     );
 }

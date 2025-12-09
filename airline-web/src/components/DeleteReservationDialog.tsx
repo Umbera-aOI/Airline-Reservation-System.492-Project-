@@ -7,32 +7,29 @@ import {
     Typography,
 } from '@mui/material';
 import {useQueryClient} from "@tanstack/react-query";
-import {useAuth} from "@/api/auth.ts";
-import {deleteFlight} from "@/api/flights.ts";
+import {deleteReservation} from "@/api/reservations.ts";
 
-export default function DeleteFlightDialog({onClose, openSnackbar, flightId}: {
+export default function DeleteReservationDialog({onClose, openSnackbar, confirmationCode, lastName}: {
     onClose: () => void,
-    openSnackbar: () => void,
-    flightId: number | null
+    openSnackbar: (message: string, severity: "success" | "error") => void,
+    confirmationCode: string | null,
+    lastName: string,
 }) {
     const queryClient = useQueryClient();
-    const userData = useAuth();
 
     const handleDelete = async () => {
-        await deleteFlight(flightId!, userData!.jwtToken!)
-        openSnackbar();
+        await deleteReservation(confirmationCode!, lastName)
+        openSnackbar('Delete Successful!', 'success');
         onClose();
         await queryClient.invalidateQueries();
     };
 
     return (
-        <Dialog open={!!flightId} onClose={() => onClose()}>
-            <DialogTitle>Delete Flight</DialogTitle>
+        <Dialog open={!!confirmationCode} onClose={() => onClose()}>
+            <DialogTitle>Delete Reservation</DialogTitle>
             <DialogContent>
                 <Typography>
-                    Are you sure you want to delete this flight? This action cannot be undone.
-                    This will also delete all reservations associated with this flight.
-                    Agents will be notified of the deletion.
+                    Are you sure you want to delete this reservation? This action cannot be undone.
                 </Typography>
             </DialogContent>
             <DialogActions>

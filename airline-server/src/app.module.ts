@@ -8,6 +8,7 @@ import { AppService } from './app.service';
 import { ReservationsModule } from './reservations/reservations.module';
 import { AuthController } from './auth/auth.controller';
 import { AuthModule } from './auth/auth.module';
+import { PaymentsModule } from './payments/payments.module';
 
 @Module({
     imports: [
@@ -25,6 +26,7 @@ import { AuthModule } from './auth/auth.module';
         FlightsModule,
         ReservationsModule,
         AuthModule,
+        PaymentsModule,
     ],
     controllers: [AppController, AuthController],
     providers: [AppService],

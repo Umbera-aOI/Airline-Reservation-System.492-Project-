@@ -31,22 +31,25 @@ export class ReservationsService {
         const reservation = {
             ...createReservationDto,
             agentId,
+            price: Math.floor(createReservationDto.price * 100),
             flight: flight,
             confirmationCode: Math.random().toString(36).substring(2, 7).toUpperCase()
         }
         const saved = await this.reservationsRepository.save(
             this.reservationsRepository.create(reservation)
         );
-        return JSON.stringify({...saved, flight: saved.flight});
+        return {...saved, flight: saved.flight};
     }
 
     async findConfirmation(confirmationCode: string, lastName: string) {
-        return JSON.stringify(await this.reservationsRepository.findOneByOrFail({confirmationCode, lastName}));
+        return this.reservationsRepository.findOneByOrFail({confirmationCode, lastName});
+    }
+
+    async deleteByConfirmation(confirmationCode: string, lastName: string) {
+        return this.reservationsRepository.delete({confirmationCode, lastName});
     }
 
     async findByAgent(agentId: number) {
-        return JSON.stringify(
-            await this.reservationsRepository.findBy({agentId})
-        );
+        return this.reservationsRepository.findBy({agentId});
     }
 }

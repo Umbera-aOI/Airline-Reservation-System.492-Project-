@@ -2,12 +2,14 @@ import {useState, type ChangeEvent, type FormEvent} from 'react'
 import {createFileRoute, useNavigate} from '@tanstack/react-router'
 import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query'
 import {
+    Alert,
     Box,
     Button,
     Card,
     CardActions,
     CardContent,
     CircularProgress,
+    Snackbar,
     TextField,
     Typography,
 } from '@mui/material'
@@ -15,6 +17,7 @@ import {
     getFlightById,
 } from '@/api/flights.ts'
 import {
+    bookReservation,
     payForFlight,
     type PaymentPayload, type Reservation,
 } from '@/api/reservations.ts'
@@ -29,6 +32,7 @@ function FlightPaymentPage() {
     const {flightId} = Route.useParams();
     const userData = useAuth();
     const jwtToken = userData?.jwtToken ?? null;
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
     const navigate = useNavigate({from: Route.fullPath});
     const queryClient = useQueryClient();
 
@@ -37,7 +41,12 @@ function FlightPaymentPage() {
         queryFn: () => getFlightById(+flightId),
     })
 
-    const [formValues, setFormValues] = useState<PaymentPayload>({
+    const [formValues, setFormValues] = useState<{
+        cardNumber: string,
+        nameOnCard: string,
+        expiry: string,
+        cvv: string,
+    }>({
         cardNumber: '',
         nameOnCard: '',
         expiry: '',
@@ -47,25 +56,51 @@ function FlightPaymentPage() {
     const {
         mutate,
         isPending,
-        isError,
-        error,
     } = useMutation({
-        mutationFn: (payload: PaymentPayload) => {
-            const lastSpace = payload.nameOnCard.lastIndexOf(' ');
-            const firstName = payload.nameOnCard.slice(0, lastSpace);
-            const lastName = payload.nameOnCard.slice(lastSpace + 1);
-            return payForFlight({flightId, firstName, lastName, price: flight!.price}, jwtToken);
+        mutationFn: async (payload: PaymentPayload) => {
+            await payForFlight(payload, jwtToken);
+            return await bookReservation({
+                flightId,
+                firstName: payload.firstName,
+                lastName: payload.lastName,
+                price: flight!.price
+            }, jwtToken);
         },
         onSuccess: (result: Reservation) => {
             const {confirmationCode, lastName} = result;
             queryClient.setQueryData(['reservation', [confirmationCode, lastName]], result);
-            navigate({
+            return navigate({
                 to: '/reservations/$confirmationCode',
                 params: {confirmationCode},
                 search: {lastName, confirmation: true},
             })
         },
+        onError: () => setSnackbarOpen(true),
     })
+
+    const handleCardNumberChange = (
+        e: ChangeEvent<HTMLInputElement>,
+    ) => {
+        let value = e.target.value;
+        [4, 9, 14].forEach(i => {
+            if (value.length > i && value.at(i) != ' ') {
+                value = `${value.slice(0, i)} ${value.slice(i, value.length)}`
+            }
+        });
+        setFormValues((prev: any) => ({...prev, cardNumber: value}))
+    }
+
+
+    const handleExpirationChange = (
+        e: ChangeEvent<HTMLInputElement>,
+    ) => {
+        let value = e.target.value;
+        if (value.length > 2 && value.at(2) != '/') {
+            value = `${value.slice(0, 2)}/${value.slice(2, value.length)}`
+        }
+        setFormValues((prev: any) => ({...prev, expiry: value}))
+    }
+
 
     const handleChange = (
         e: ChangeEvent<HTMLInputElement>,
@@ -76,7 +111,20 @@ function FlightPaymentPage() {
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault()
-        mutate(formValues);
+        const lastSpace = formValues.nameOnCard.lastIndexOf(' ');
+        const firstName = formValues.nameOnCard.slice(0, lastSpace);
+        const lastName = formValues.nameOnCard.slice(lastSpace + 1);
+        mutate({
+            creditCardNumber: formValues.cardNumber,
+            firstName,
+            lastName,
+            expirationDate: formValues.expiry,
+            cvv: formValues.cvv,
+        });
+    }
+
+    const handleCloseSnackbar = () => {
+        setSnackbarOpen(false);
     }
 
     return (
@@ -103,9 +151,15 @@ function FlightPaymentPage() {
                             label="Card Number"
                             name="cardNumber"
                             value={formValues.cardNumber}
-                            onChange={handleChange}
+                            onChange={handleCardNumberChange}
                             required
-                            inputProps={{maxLength: 19}}
+                            slotProps={{
+                                htmlInput: {
+                                    maxLength: 19,
+                                    inputMode: 'numeric',
+                                    pattern: '\\d{4} \\d{4} \\d{4} \\d{4}'
+                                }
+                            }}
                             placeholder="**** **** **** ****"
                         />
                         <TextField
@@ -120,8 +174,14 @@ function FlightPaymentPage() {
                                 label="Expiry (MM/YY)"
                                 name="expiry"
                                 value={formValues.expiry}
-                                inputProps={{maxLength: 4}}
-                                onChange={handleChange}
+                                slotProps={{
+                                    htmlInput: {
+                                        maxLength: 5,
+                                        inputMode: 'numeric',
+                                        pattern: '\\d{2}/\\d{2}'
+                                    }
+                                }}
+                                onChange={handleExpirationChange}
                                 required
                             />
                             <TextField
@@ -131,15 +191,9 @@ function FlightPaymentPage() {
                                 onChange={handleChange}
                                 required
                                 type="password"
-                                inputProps={{maxLength: 4}}
+                                slotProps={{htmlInput: {maxLength: 4, inputMode: 'numeric'}}}
                             />
                         </Box>
-
-                        {isError && (
-                            <Typography color="error">
-                                {(error as Error)?.message ?? 'Payment failed'}
-                            </Typography>
-                        )}
                     </Box>
                 </CardContent>
                 <CardActions>
@@ -153,6 +207,16 @@ function FlightPaymentPage() {
                     </Button>
                 </CardActions>
             </Card>
+            <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleCloseSnackbar}>
+                <Alert
+                    onClose={handleCloseSnackbar}
+                    severity='error'
+                    variant="filled"
+                    sx={{width: '100%'}}
+                >
+                    Payment Failed! Please try again.
+                </Alert>
+            </Snackbar>
         </Box>
     )
 }
