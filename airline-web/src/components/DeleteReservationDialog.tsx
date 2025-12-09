@@ -11,7 +11,7 @@ import {deleteReservation} from "@/api/reservations.ts";
 
 export default function DeleteReservationDialog({onClose, openSnackbar, confirmationCode, lastName}: {
     onClose: () => void,
-    openSnackbar: (message: string, severity: "success" | "error") => void,
+    openSnackbar: () => void,
     confirmationCode: string | null,
     lastName: string,
 }) {
@@ -19,7 +19,7 @@ export default function DeleteReservationDialog({onClose, openSnackbar, confirma
 
     const handleDelete = async () => {
         await deleteReservation(confirmationCode!, lastName)
-        openSnackbar('Delete Successful!', 'success');
+        openSnackbar();
         onClose();
         await queryClient.invalidateQueries();
     };

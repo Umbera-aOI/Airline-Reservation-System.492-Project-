@@ -54,7 +54,7 @@ export default function ReservationInfo({reservation}: { reservation?: Reservati
                     variant="filled"
                     sx={{width: '100%'}}
                 >
-                    Delete Flight Successful
+                    Delete Reservation Successful
                 </Alert>
             </Snackbar>
         </Box>
