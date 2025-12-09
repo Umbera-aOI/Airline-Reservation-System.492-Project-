@@ -1,4 +1,4 @@
-import {Typography, Box, Divider, Button, Snackbar, Alert} from "@mui/material";
+import {Typography, Box, Divider, Button, Snackbar, Alert, Grid} from "@mui/material";
 import {type Reservation} from "@/api/reservations.ts";
 import {useState} from "react";
 import {useRouter} from "@tanstack/react-router";
@@ -26,16 +26,23 @@ export default function ReservationInfo({reservation}: { reservation?: Reservati
     }
     return reservation && (
         <Box>
-            <Typography variant="subtitle1">
-                Confirmation Code: {reservation.confirmationCode}
-            </Typography>
-            <Typography variant="body2">
-                Name: {reservation.firstName} {reservation.lastName}
-            </Typography>
+            <Grid container spacing={2}>
+                <Grid size={8}>
+                    <Typography variant="subtitle1">
+                        Confirmation Code: {reservation.confirmationCode}
+                    </Typography>
+                    <Typography variant="body2">
+                        Name: {reservation.firstName} {reservation.lastName}
+                    </Typography>
+                </Grid>
+                <Grid size={4}>
+                    <Button color='error' variant='contained'
+                            onClick={handleClickDeleteReservation}>
+                        Delete Reservation
+                    </Button>
+                </Grid>
+            </Grid>
             <Divider/>
-            <Button color='error' variant='contained' onClick={handleClickDeleteReservation}>
-                Delete Reservation
-            </Button>
             <DeleteReservationDialog onClose={handleCloseDeleteReservationConfirmation}
                                      openSnackbar={handleOpenSnackbar}
                                      confirmationCode={confirmationCode} lastName={reservation.lastName!}/>
