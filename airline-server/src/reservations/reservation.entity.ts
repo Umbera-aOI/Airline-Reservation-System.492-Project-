@@ -25,7 +25,7 @@ export class Reservation {
     @Column({nullable: true})
     agentId: number;
 
-    @ManyToOne(type => Flight, flight => flight.reservations)
+    @ManyToOne(type => Flight, flight => flight.reservations, {onDelete: 'CASCADE'})
     flight: Flight;
 
     @ManyToOne(type => User, agent => agent.reservations)

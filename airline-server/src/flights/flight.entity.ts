@@ -27,6 +27,6 @@ export class Flight {
     @Column({default: 10})
     seatsAvailable: number;
 
-    @OneToMany(type => Reservation, reservation => reservation.flight)
+    @OneToMany(type => Reservation, reservation => reservation.flight, {onDelete: "CASCADE"})
     reservations: Reservation[];
 }
